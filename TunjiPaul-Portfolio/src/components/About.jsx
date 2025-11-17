@@ -33,34 +33,34 @@ function About() {
         </p>
 
         <div className="flex flex-wrap gap-3 mb-6">
-          <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300">
+          <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300 font-bold">
             HTML
           </span>
-          <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300">
+          <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300 font-bold">
             CSS
           </span>
-          <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300">
+          <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300 font-bold">
             JavaScript
           </span>
-          <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300">
+          <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300 font-bold">
             React
           </span>
-          <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300">
+          <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300 font-bold">
             Tailwind CSS
           </span>
-          <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300">
+          <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300 font-bold">
             Python
           </span>
-          <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300">
+          <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300 font-bold">
             FastAPI
           </span>
-          <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300">
+          <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300 font-bold">
             MySQL
           </span>
-          <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300">
+          <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300 font-bold">
             Git
           </span>
-          <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300">
+          <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300 font-bold">
             GitHub
           </span>
         </div>
