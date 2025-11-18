@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import ManageHero from "./ManageHero";
 import ManageProjects from "./ManageProjects";
 import AboutSection from "./AboutSection";
-// import Messages from "./Messages";
+import Messages from "./Messages";
 
 function AdminDashboard() {
   const [open, setOpen] = useState(false);
