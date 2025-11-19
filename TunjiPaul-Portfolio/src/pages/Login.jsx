@@ -7,26 +7,47 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     const savedUsername = localStorage.getItem("adminUsername");
     const savedEmail = localStorage.getItem("adminEmail");
-    const savedPassword = localStorage.getItem("adminPassword");
-
     if (savedUsername) setUsername(savedUsername);
     if (savedEmail) setEmail(savedEmail);
-    if (savedPassword) setPassword(savedPassword);
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
 
-    localStorage.setItem("adminUsername", username);
-    localStorage.setItem("adminEmail", email);
-    localStorage.setItem("adminPassword", password);
+    try {
+      const response = await fetch("http://localhost:8000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    navigate("/dashboard");
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || "Login failed");
+      }
+
+      // Save username from form or backend
+      const nameToSave = data.username || username;
+
+      localStorage.setItem("adminUsername", nameToSave);
+      localStorage.setItem("adminEmail", data.email);
+
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -44,6 +65,10 @@ function Login() {
         <h2 className="text-2xl font-bold mb-6 text-center text-orange-600">
           Admin Login
         </h2>
+
+        {error && (
+          <p className="mb-4 text-red-600 text-sm text-center">{error}</p>
+        )}
 
         <input
           type="text"
@@ -72,7 +97,6 @@ function Login() {
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600 border-gray-300"
             required
           />
-
           <span
             className="absolute right-3 top-3 cursor-pointer text-gray-600"
             onClick={() => setShowPassword(!showPassword)}
@@ -90,9 +114,14 @@ function Login() {
 
         <button
           type="submit"
-          className="w-full py-2 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-500 transition cursor-pointer hover:text-black"
+          disabled={loading}
+          className={`w-full py-2 font-semibold rounded-lg transition cursor-pointer ${
+            loading
+              ? "bg-gray-400 text-gray-200"
+              : "bg-orange-600 text-white hover:bg-orange-500 hover:text-black"
+          }`}
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </button>
       </form>
     </div>

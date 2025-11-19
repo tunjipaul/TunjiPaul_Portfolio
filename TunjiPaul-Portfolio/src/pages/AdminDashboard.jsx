@@ -5,11 +5,12 @@ import ManageHero from "./ManageHero";
 import ManageProjects from "./ManageProjects";
 import AboutSection from "./AboutSection";
 import Messages from "./Messages";
+import DashboardHome from "./DashboardHome";
 
 function AdminDashboard() {
   const [open, setOpen] = useState(false);
   const [username, setUsername] = useState("");
-  const [activeSection, setActiveSection] = useState("hero");
+  const [activeSection, setActiveSection] = useState("home");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,6 +29,8 @@ function AdminDashboard() {
 
   const renderSection = () => {
     switch (activeSection) {
+      case "home":
+        return <DashboardHome />;
       case "hero":
         return <ManageHero />;
       case "projects":
@@ -37,7 +40,7 @@ function AdminDashboard() {
       case "messages":
         return <Messages />;
       default:
-        return <ManageHero />;
+        return <DashboardHome />;
     }
   };
 

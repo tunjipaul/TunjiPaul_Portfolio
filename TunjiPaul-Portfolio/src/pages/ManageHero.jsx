@@ -45,7 +45,7 @@ function ManageHero() {
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="border-gray-300 border w-full px-4 py-2 rounded-lg focus:ring-2 focus:ring-orange-600 focus:outline-none"
+            className="border-gray-300 border w-full px-4 py-2 rounded-lg resize-none focus:ring-2 focus:ring-orange-600 focus:outline-none"
             rows={4}
             required
           />

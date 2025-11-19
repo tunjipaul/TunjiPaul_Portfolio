@@ -2,9 +2,9 @@ from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel, Field
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
-import bcrypt
 import uvicorn
 from database import get_db
+from hero_routes import router as hero_router
 
 app = FastAPI(title="My Personal Portfolio Backend", version="1.0.0")
 
@@ -18,16 +18,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 class UserLogin(BaseModel):
     email: str = Field(..., example="sam@gmail.com")
     password: str = Field(..., example="yourpassword")
 
+app.include_router(hero_router)
 
 @app.get("/")
 def home():
     return {"message": "Welcome to My Personal Portfolio Backend!"}
-
 
 @app.post("/login")
 def login(user: UserLogin, db=Depends(get_db)):
@@ -35,19 +34,16 @@ def login(user: UserLogin, db=Depends(get_db)):
     result = db.execute(query, {"email": user.email}).fetchone()
 
     if result:
-        stored_hashed_password = result.password
-        if bcrypt.checkpw(
-            user.password.encode("utf-8"), stored_hashed_password.encode("utf-8")
-        ):
+        if user.password == result.password:
             return {
                 "message": "Login successful",
-                "username": result.username,
                 "email": result.email,
             }
         else:
             raise HTTPException(status_code=401, detail="Invalid password")
     else:
         raise HTTPException(status_code=404, detail="User not found")
+    
 
 
 if __name__ == "__main__":
