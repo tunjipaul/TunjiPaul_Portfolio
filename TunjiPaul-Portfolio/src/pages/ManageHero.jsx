@@ -1,29 +1,42 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function ManageHero() {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [viewButtonText, setViewButtonText] = useState("View Projects");
-  const [contactButtonText, setContactButtonText] = useState("Contact Me");
-  const [image, setImage] = useState("");
+  const [hero, setHero] = useState({
+    title: "",
+    subtitle: "",
+    view_button_text: "View Projects",
+    contact_button_text: "Contact Me",
+    image_url: "",
+  });
 
   useEffect(() => {
-    // Load hero data from localStorage if available
-    const heroData = JSON.parse(localStorage.getItem("heroData"));
-    if (heroData) {
-      setName(heroData.name);
-      setDescription(heroData.description);
-      setViewButtonText(heroData.viewButtonText);
-      setContactButtonText(heroData.contactButtonText);
-      setImage(heroData.image);
-    }
+    fetch("http://localhost:8000/api/hero/1")
+      .then((res) => res.json())
+      .then((data) => setHero(data))
+      .catch((err) => console.error(err));
   }, []);
 
-  const handleSave = (e) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setHero((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = async (e) => {
     e.preventDefault();
-    const heroData = { name, description, viewButtonText, contactButtonText, image };
-    localStorage.setItem("heroData", JSON.stringify(heroData));
-    alert("Hero section updated!");
+    try {
+      const res = await fetch("http://localhost:8000/api/hero/1", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(hero),
+      });
+      if (!res.ok) throw new Error("Failed to update hero");
+      const updatedHero = await res.json();
+      setHero(updatedHero);
+      alert("Hero section updated!");
+    } catch (err) {
+      console.error(err);
+      alert("Error updating hero");
+    }
   };
 
   return (
@@ -31,23 +44,24 @@ function ManageHero() {
       <h2 className="text-2xl font-bold text-orange-600 mb-6">Manage Hero Section</h2>
       <form onSubmit={handleSave} className="space-y-4">
         <div>
-          <label className="block mb-1 font-semibold">Name</label>
+          <label className="block mb-1 font-semibold">Title</label>
           <input
             type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            name="title"
+            value={hero.title}
+            onChange={handleChange}
             className="border-gray-300 border w-full px-4 py-2 rounded-lg focus:ring-2 focus:ring-orange-600 focus:outline-none"
             required
           />
         </div>
         <div>
-          <label className="block mb-1 font-semibold">Description</label>
+          <label className="block mb-1 font-semibold">Subtitle</label>
           <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            name="subtitle"
+            value={hero.subtitle}
+            onChange={handleChange}
             className="border-gray-300 border w-full px-4 py-2 rounded-lg resize-none focus:ring-2 focus:ring-orange-600 focus:outline-none"
             rows={4}
-            required
           />
         </div>
         <div className="grid md:grid-cols-2 gap-4">
@@ -55,8 +69,9 @@ function ManageHero() {
             <label className="block mb-1 font-semibold">View Projects Button Text</label>
             <input
               type="text"
-              value={viewButtonText}
-              onChange={(e) => setViewButtonText(e.target.value)}
+              name="view_button_text"
+              value={hero.view_button_text}
+              onChange={handleChange}
               className="border-gray-300 border w-full px-4 py-2 rounded-lg focus:ring-2 focus:ring-orange-600 focus:outline-none"
               required
             />
@@ -65,8 +80,9 @@ function ManageHero() {
             <label className="block mb-1 font-semibold">Contact Button Text</label>
             <input
               type="text"
-              value={contactButtonText}
-              onChange={(e) => setContactButtonText(e.target.value)}
+              name="contact_button_text"
+              value={hero.contact_button_text}
+              onChange={handleChange}
               className="border-gray-300 border w-full px-4 py-2 rounded-lg focus:ring-2 focus:ring-orange-600 focus:outline-none"
               required
             />
@@ -76,15 +92,16 @@ function ManageHero() {
           <label className="block mb-1 font-semibold">Hero Image URL</label>
           <input
             type="text"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
+            name="image_url"
+            value={hero.image_url}
+            onChange={handleChange}
             className="border-gray-300 border w-full px-4 py-2 rounded-lg focus:ring-2 focus:ring-orange-600 focus:outline-none"
             placeholder="Paste image URL"
           />
         </div>
-        {image && (
+        {hero.image_url && (
           <div className="mt-4">
-            <img src={image} alt="Hero Preview" className="w-32 h-32 rounded-full object-cover" />
+            <img src={hero.image_url} alt="Hero Preview" className="w-32 h-32 rounded-full object-cover" />
           </div>
         )}
         <button

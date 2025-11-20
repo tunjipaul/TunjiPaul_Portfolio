@@ -22,6 +22,8 @@ class Hero(Base):
     title = Column(String(255), nullable=False)
     subtitle = Column(String(255), nullable=False)
     image_url = Column(String(500), nullable=True)
+    view_button_text = Column(String(255), nullable=True)
+    contact_button_text = Column(String(255), nullable=True)
 
 
 def get_db():
@@ -63,6 +65,8 @@ def create_tables():
             title VARCHAR(255) NOT NULL,
             subtitle VARCHAR(255) NOT NULL,
             image_url VARCHAR(500)
+            view_button_text VARCHAR(255),
+            contact_button_text VARCHAR(255)
         );
         """
         )

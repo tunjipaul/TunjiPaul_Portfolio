@@ -1,5 +1,16 @@
+import { useEffect, useState } from "react";
 
 function Hero() {
+  const [hero, setHero] = useState(null);
+
+  useEffect(() => {
+    fetch("http://localhost:8000/api/hero/1")
+      .then((res) => res.json())
+      .then((data) => setHero(data));
+  }, []);
+
+  if (!hero) return null;
+
   return (
     <section
       id="hero"
@@ -7,15 +18,11 @@ function Hero() {
     >
       <div className="md:w-1/2 flex flex-col justify-center mb-10 md:mb-0">
         <h1 className="text-4xl md:text-6xl font-bold text-orange-600 mb-4">
-          Hello, I'm Tunji Paul.
+          {hero.title}
         </h1>
 
         <p className="text-lg md:text-2xl text-gray-700 mb-6 max-w-xl">
-          By day, I'm an AI Developer building intelligent, scalable solutions.
-          By night, I'm an analyst of politics and governance, an occasional
-          writer, and a public speaker on topics that matter. And if the world
-          ever seems like it's coming to an end? Don't worry, that's when my
-          sense of humor truly shines.
+          {hero.subtitle}
         </p>
 
         <div className="flex space-x-4">
@@ -29,8 +36,9 @@ function Hero() {
             }}
             className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-500 transition"
           >
-            View Projects
+            {hero.view_button_text}
           </a>
+
           <a
             href="#contact"
             onClick={(e) => {
@@ -41,21 +49,19 @@ function Hero() {
             }}
             className="px-6 py-3 border border-orange-600 text-orange-600 rounded-lg hover:bg-orange-50 transition"
           >
-            Contact Me
+            {hero.contact_button_text}
           </a>
         </div>
       </div>
 
-      {/* IMAGE + SPINNING BORDER */}
       <div className="md:w-1/2 flex justify-center relative">
         <div className="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96">
           <img
-            src="https://res.cloudinary.com/dbadkovof/image/upload/v1763236151/TUNJI_nemcvi.png"
-            alt="Tunji Paul"
+            src={hero.image_url}
+            alt={hero.title}
             className="w-full h-full rounded-full shadow-lg"
           />
 
-          {/* Spinning border */}
           <div
             className="absolute top-0 left-0 w-full h-full rounded-full border-4 border-orange-600 border-t-transparent animate-spin"
             style={{ animation: "spin 8s linear infinite" }}

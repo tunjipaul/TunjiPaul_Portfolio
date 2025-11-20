@@ -3,8 +3,10 @@ from pydantic import BaseModel, Field
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 import uvicorn
-from database import get_db
+from database import get_db, Base, engine
 from hero_routes import router as hero_router
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="My Personal Portfolio Backend", version="1.0.0")
 
