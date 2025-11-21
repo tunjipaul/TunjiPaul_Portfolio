@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 function AboutSection() {
+  const [aboutId, setAboutId] = useState(null);
   const [aboutText, setAboutText] = useState("");
   const [skills, setSkills] = useState([]);
   const [newSkill, setNewSkill] = useState("");
@@ -8,15 +9,19 @@ function AboutSection() {
   const [imageUrl, setImageUrl] = useState("");
 
   useEffect(() => {
-    const storedAbout = localStorage.getItem("aboutText");
-    const storedSkills = localStorage.getItem("aboutSkills");
-    const storedEducation = localStorage.getItem("aboutEducation");
-    const storedImage = localStorage.getItem("aboutImage");
-
-    if (storedAbout) setAboutText(storedAbout);
-    if (storedSkills) setSkills(JSON.parse(storedSkills));
-    if (storedEducation) setEducation(storedEducation);
-    if (storedImage) setImageUrl(storedImage);
+    fetch("http://localhost:8000/api/about")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          const about = data[0];
+          setAboutId(about.id);
+          setAboutText(about.content || "");
+          setSkills(about.skills || []);
+          setEducation(about.education || "");
+          setImageUrl(about.image_url || "");
+        }
+      })
+      .catch((err) => console.error(err));
   }, []);
 
   const handleAddSkill = () => {
@@ -31,20 +36,43 @@ function AboutSection() {
   };
 
   const handleSave = () => {
-    localStorage.setItem("aboutText", aboutText);
-    localStorage.setItem("aboutSkills", JSON.stringify(skills));
-    localStorage.setItem("aboutEducation", education);
-    localStorage.setItem("aboutImage", imageUrl);
-    alert("About section saved!");
+    if (!aboutId) {
+      alert("No About section found to update");
+      return;
+    }
+
+    fetch(`http://localhost:8000/api/about/${aboutId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        content: aboutText,
+        skills: skills,
+        education: education,
+        image_url: imageUrl,
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+      })
+      .then(() => alert("About section updated!"))
+      .catch((err) => {
+        console.error(err);
+        alert(`Error updating about: ${err.message}`);
+      });
   };
 
   return (
     <div className="min-h-screen p-6 md:p-10 bg-gray-100">
-      <h1 className="text-3xl font-bold text-orange-600 mb-6">Manage About Section</h1>
+      <h1 className="text-3xl font-bold text-orange-600 mb-6">
+        Manage About Section
+      </h1>
 
       <div className="bg-white rounded-xl shadow p-6 space-y-6">
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Profile Image URL</label>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Profile Image URL
+          </label>
           <input
             type="text"
             value={imageUrl}
@@ -62,7 +90,9 @@ function AboutSection() {
         </div>
 
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">About Me</label>
+          <label className="block text-gray-700 font-semibold mb-2">
+            About Me
+          </label>
           <textarea
             value={aboutText}
             onChange={(e) => setAboutText(e.target.value)}
@@ -72,7 +102,9 @@ function AboutSection() {
         </div>
 
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Skills</label>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Skills
+          </label>
           <div className="flex gap-2 flex-wrap mb-2">
             {skills.map((skill, index) => (
               <span
@@ -84,6 +116,7 @@ function AboutSection() {
               </span>
             ))}
           </div>
+
           <div className="flex gap-2">
             <input
               type="text"
@@ -102,7 +135,9 @@ function AboutSection() {
         </div>
 
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Education</label>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Education
+          </label>
           <input
             type="text"
             value={education}

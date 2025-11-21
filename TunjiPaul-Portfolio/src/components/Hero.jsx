@@ -1,15 +1,36 @@
 import { useEffect, useState } from "react";
 
 function Hero() {
+  const defaultHero = {
+    title: "Hello, I'm TunjiPaul!",
+    subtitle:
+      "By day, I'm an AI Developer building intelligent, scalable solutions. By night, I'm an analyst of politics and governance, an occasional writer, and a public speaker on topics that matter. And if the world ever seems like it's coming to an end? Don't worry, that's when my sense of humor truly shines.",
+    image_url: "https://res.cloudinary.com/dbadkovof/image/upload/v1763236151/TUNJI_nemcvi.png",
+    view_button_text: "View Projects",
+    contact_button_text: "Contact Me",
+  };
+
   const [hero, setHero] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/hero/1")
-      .then((res) => res.json())
-      .then((data) => setHero(data));
+    async function fetchHero() {
+      try {
+        const res = await fetch("http://localhost:8000/api/hero/");
+        const data = await res.json();
+        if (data.length > 0) {
+          setHero(data[0]);
+        } else {
+          setHero(defaultHero);
+        }
+      } catch (err) {
+        console.error("Failed to fetch hero:", err);
+        setHero(defaultHero);
+      }
+    }
+    fetchHero();
   }, []);
 
-  if (!hero) return null;
+  if (!hero) return <div>Loading...</div>;
 
   return (
     <section
@@ -30,7 +51,7 @@ function Hero() {
             href="#projects"
             onClick={(e) => {
               e.preventDefault();
-              document.getElementById("projects").scrollIntoView({
+              document.getElementById("projects")?.scrollIntoView({
                 behavior: "smooth",
               });
             }}
@@ -43,7 +64,7 @@ function Hero() {
             href="#contact"
             onClick={(e) => {
               e.preventDefault();
-              document.getElementById("contact").scrollIntoView({
+              document.getElementById("contact")?.scrollIntoView({
                 behavior: "smooth",
               });
             }}

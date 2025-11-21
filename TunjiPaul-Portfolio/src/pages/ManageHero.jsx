@@ -1,19 +1,44 @@
 import { useEffect, useState } from "react";
 
 function ManageHero() {
-  const [hero, setHero] = useState({
-    title: "",
-    subtitle: "",
+  const [hero, setHero] = useState(null);
+  const [heroId, setHeroId] = useState(null);
+
+  const defaultHero = {
+    title: "Hi, I'm Tunji Paul",
+    subtitle:
+      "By day, I'm an AI Developer building intelligent, scalable solutions. By night, I'm an analyst of politics and governance, an occasional writer, and a public speaker on topics that matter. And if the world ever seems like it's coming to an end? Don't worry, that's when my sense of humor truly shines.",
     view_button_text: "View Projects",
     contact_button_text: "Contact Me",
     image_url: "",
-  });
+  };
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/hero/1")
-      .then((res) => res.json())
-      .then((data) => setHero(data))
-      .catch((err) => console.error(err));
+    async function fetchOrCreateHero() {
+      try {
+        const res = await fetch("http://localhost:8000/api/hero/");
+        const data = await res.json();
+
+        if (data.length > 0) {
+          setHero(data[0]);
+          setHeroId(data[0].id);
+        } else {
+          // No hero exists, create one
+          const createRes = await fetch("http://localhost:8000/api/hero/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(defaultHero),
+          });
+          const newHero = await createRes.json();
+          setHero(newHero);
+          setHeroId(newHero.id);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    fetchOrCreateHero();
   }, []);
 
   const handleChange = (e) => {
@@ -23,8 +48,12 @@ function ManageHero() {
 
   const handleSave = async (e) => {
     e.preventDefault();
+    if (!heroId) {
+      alert("No hero exists to update!");
+      return;
+    }
     try {
-      const res = await fetch("http://localhost:8000/api/hero/1", {
+      const res = await fetch(`http://localhost:8000/api/hero/${heroId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(hero),
@@ -35,13 +64,17 @@ function ManageHero() {
       alert("Hero section updated!");
     } catch (err) {
       console.error(err);
-      alert("Error updating hero");
+      alert(`Error updating hero: ${err.message}`);
     }
   };
 
+  if (!hero) return <div>Loading...</div>;
+
   return (
     <div className="p-6 bg-white rounded-xl shadow-md max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold text-orange-600 mb-6">Manage Hero Section</h2>
+      <h2 className="text-2xl font-bold text-orange-600 mb-6">
+        Manage Hero Section
+      </h2>
       <form onSubmit={handleSave} className="space-y-4">
         <div>
           <label className="block mb-1 font-semibold">Title</label>
@@ -66,7 +99,9 @@ function ManageHero() {
         </div>
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label className="block mb-1 font-semibold">View Projects Button Text</label>
+            <label className="block mb-1 font-semibold">
+              View Projects Button Text
+            </label>
             <input
               type="text"
               name="view_button_text"
@@ -77,7 +112,9 @@ function ManageHero() {
             />
           </div>
           <div>
-            <label className="block mb-1 font-semibold">Contact Button Text</label>
+            <label className="block mb-1 font-semibold">
+              Contact Button Text
+            </label>
             <input
               type="text"
               name="contact_button_text"
@@ -101,7 +138,11 @@ function ManageHero() {
         </div>
         {hero.image_url && (
           <div className="mt-4">
-            <img src={hero.image_url} alt="Hero Preview" className="w-32 h-32 rounded-full object-cover" />
+            <img
+              src={hero.image_url}
+              alt="Hero Preview"
+              className="w-32 h-32 rounded-full object-cover"
+            />
           </div>
         )}
         <button

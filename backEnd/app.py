@@ -5,8 +5,15 @@ from sqlalchemy import text
 import uvicorn
 from database import get_db, Base, engine
 from hero_routes import router as hero_router
+from about_routes import router as about_router
 
-Base.metadata.create_all(bind=engine)
+
+try:
+    Base.metadata.create_all(bind=engine)
+    print("✓ Tables created/verified successfully")
+except Exception as e:
+    print(f" Warning: Could not create tables: {e}")
+    print(" Make sure MySQL is running")
 
 app = FastAPI(title="My Personal Portfolio Backend", version="1.0.0")
 
@@ -25,6 +32,7 @@ class UserLogin(BaseModel):
     password: str = Field(..., example="yourpassword")
 
 app.include_router(hero_router)
+app.include_router(about_router)
 
 @app.get("/")
 def home():
