@@ -4,16 +4,49 @@ function Contacts() {
   const [form, setForm] = useState({
     name: "",
     email: "",
+    subject: "",
     message: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(null);
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    console.log(form);
+    setLoading(true);
+    setError(null);
+
+    if (!form.name.trim() || !form.email.trim() || !form.subject.trim() || !form.message.trim()) {
+      setError("All fields are required");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8000/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Failed to send message");
+      }
+
+      setForm({ name: "", email: "", subject: "", message: "" });
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 5000);
+    } catch (err) {
+      setError(err.message);
+      console.error("Error sending message:", err);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -25,6 +58,18 @@ function Contacts() {
           onSubmit={handleSubmit}
           className="bg-orange-50 p-8 rounded-xl shadow-md space-y-6"
         >
+          {success && (
+            <div className="p-4 bg-green-100 text-green-800 rounded-lg">
+              ✓ Message sent successfully! I'll get back to you soon.
+            </div>
+          )}
+
+          {error && (
+            <div className="p-4 bg-red-100 text-red-800 rounded-lg">
+              ✗ {error}
+            </div>
+          )}
+
           <div>
             <label className="block text-gray-700 mb-2">Name</label>
             <input
@@ -52,6 +97,19 @@ function Contacts() {
           </div>
 
           <div>
+            <label className="block text-gray-700 mb-2">Subject</label>
+            <input
+              type="text"
+              name="subject"
+              value={form.subject}
+              onChange={handleChange}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-300 outline-none transition duration-500"
+              placeholder="Message subject"
+              required
+            />
+          </div>
+
+          <div>
             <label className="block text-gray-700 mb-2">Message</label>
             <textarea
               name="message"
@@ -66,9 +124,10 @@ function Contacts() {
 
           <button
             type="submit"
-            className="w-full py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-500 transition duration-500"
+            disabled={loading}
+            className="w-full py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-500 transition duration-500 disabled:opacity-50"
           >
-            Send Message
+            {loading ? "Sending..." : "Send Message"}
           </button>
         </form>
       </div>

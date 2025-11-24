@@ -9,21 +9,24 @@ import DashboardHome from "./DashboardHome";
 
 function AdminDashboard() {
   const [open, setOpen] = useState(false);
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [activeSection, setActiveSection] = useState("home");
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem("adminUsername");
-    if (storedUsername) {
-      setUsername(storedUsername);
-    } else {
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    const storedEmail = localStorage.getItem("adminEmail");
+
+    if (!isLoggedIn || !storedEmail) {
       navigate("/admin");
+    } else {
+      setEmail(storedEmail);
     }
   }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.clear();
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("adminEmail");
     navigate("/admin");
   };
 
@@ -33,10 +36,10 @@ function AdminDashboard() {
         return <DashboardHome />;
       case "hero":
         return <ManageHero />;
-      case "projects":
-        return <ManageProjects />;
       case "about":
         return <AboutSection />;
+      case "projects":
+        return <ManageProjects />;
       case "messages":
         return <Messages />;
       default:
@@ -70,25 +73,38 @@ function AdminDashboard() {
 
         <nav className="space-y-4">
           <button
-            onClick={() => setActiveSection("hero")}
+            onClick={() => {
+              setActiveSection("hero");
+              setOpen(false);
+            }}
             className="font-bold block w-full text-left px-3 py-2 rounded-lg hover:bg-orange-100 text-gray-700"
           >
             Manage Hero
           </button>
           <button
-            onClick={() => setActiveSection("projects")}
-            className="font-bold block w-full text-left px-3 py-2 rounded-lg hover:bg-orange-100 text-gray-700"
-          >
-            Manage Projects
-          </button>
-          <button
-            onClick={() => setActiveSection("about")}
+            onClick={() => {
+              setActiveSection("about");
+              setOpen(false);
+            }}
             className="font-bold block w-full text-left px-3 py-2 rounded-lg hover:bg-orange-100 text-gray-700"
           >
             About Section
           </button>
           <button
-            onClick={() => setActiveSection("messages")}
+            onClick={() => {
+              setActiveSection("projects");
+              setOpen(false);
+            }}
+            className="font-bold block w-full text-left px-3 py-2 rounded-lg hover:bg-orange-100 text-gray-700"
+          >
+            Manage Projects
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveSection("messages");
+              setOpen(false);
+            }}
             className="font-bold block w-full text-left px-3 py-2 rounded-lg hover:bg-orange-100 text-gray-700"
           >
             Messages
@@ -106,7 +122,7 @@ function AdminDashboard() {
         <h1 className="text-3xl font-bold text-orange-600 mb-6">Dashboard</h1>
         <div className="bg-white rounded-xl shadow p-6">
           <p className="text-gray-700 font-bold">
-            Welcome <span className="text-orange-600">{username}</span>
+            Welcome <span className="text-orange-600">{email}</span>
           </p>
         </div>
 

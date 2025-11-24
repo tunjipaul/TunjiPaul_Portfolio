@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function Login() {
-  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -12,16 +11,23 @@ function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const savedUsername = localStorage.getItem("adminUsername");
+    // Check if already logged in
     const savedEmail = localStorage.getItem("adminEmail");
-    if (savedUsername) setUsername(savedUsername);
-    if (savedEmail) setEmail(savedEmail);
-  }, []);
+    if (savedEmail) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+
+    if (!email.trim() || !password.trim()) {
+      setError("Email and password are required");
+      setLoading(false);
+      return;
+    }
 
     try {
       const response = await fetch("http://localhost:8000/login", {
@@ -36,11 +42,9 @@ function Login() {
         throw new Error(data.detail || "Login failed");
       }
 
-      // Save username from form or backend
-      const nameToSave = data.username || username;
-
-      localStorage.setItem("adminUsername", nameToSave);
+      // Save login info
       localStorage.setItem("adminEmail", data.email);
+      localStorage.setItem("isLoggedIn", "true");
 
       navigate("/dashboard");
     } catch (err) {
@@ -71,15 +75,6 @@ function Login() {
         )}
 
         <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="w-full mb-4 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600 border-gray-300"
-          required
-        />
-
-        <input
           type="email"
           placeholder="Email"
           value={email}
@@ -104,13 +99,6 @@ function Login() {
             {showPassword ? <FaEyeSlash /> : <FaEye />}
           </span>
         </div>
-
-        <a
-          href="#"
-          className="text-right text-sm text-orange-600 cursor-pointer mb-6 block hover:underline"
-        >
-          Forgot Password?
-        </a>
 
         <button
           type="submit"

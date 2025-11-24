@@ -1,38 +1,55 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 function Projects() {
-  const projects = [
-    {
-      title: "Contact Manager App",
-      desc: "A fullstack contact management system using FastAPI, MySQL, and React.",
-      github: "https://github.com/yourrepo/contact-manager",
-      demo: "https://contact-manager-demo.com",
-    },
-    {
-      title: "Task Manager",
-      desc: "Create, update, and track tasks with JWT auth using FastAPI.",
-      github: "https://github.com/yourrepo/task-manager",
-      demo: "https://task-manager-demo.com",
-    },
-    {
-      title: "Blog Platform",
-      desc: "A simple blog with admin panel and MySQL storage.",
-      github: "https://github.com/yourrepo/blog-platform",
-      demo: "https://blog-platform-demo.com",
-    },
-    {
-      title: "Expense Tracker",
-      desc: "Track expenses, categories, and totals with charts.",
-      github: "https://github.com/yourrepo/expense-tracker",
-      demo: "https://expense-tracker-demo.com",
-    },
-    {
-      title: "Portfolio Website",
-      desc: "My personal portfolio built with React and Tailwind CSS.",
-      github: "https://github.com/yourrepo/portfolio",
-      demo: "https://your-portfolio-demo.com",
-    },
-  ];
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("http://localhost:8000/api/projects");
+      if (!response.ok) throw new Error("Failed to fetch projects");
+      const data = await response.json();
+      setProjects(data);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      console.error("Error fetching projects:", err);
+      setProjects([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <section id="projects" className="py-20 bg-black">
+        <div className="max-w-6xl mx-auto px-6 text-center text-gray-400">
+          Loading projects...
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section id="projects" className="py-20 bg-black">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center text-red-400">
+            Failed to load projects. Please try again later.
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const displayProjects = projects;
 
   return (
     <section id="projects" className="py-20 bg-black">
@@ -41,53 +58,67 @@ function Projects() {
           Projects
         </h2>
 
-        <div className="overflow-x-hidden w-full">
-          <div className="animate-infinite-scroll space-x-6 pb-2">
-            {[...projects, ...projects].map((project, index) => (
-              <div
-                key={index}
-                className="min-w-[300px] bg-white p-6 rounded-xl shadow-md transition-all duration-500 hover:-translate-y-2 hover:shadow-xl"
-              >
-                <h3 className="text-2xl font-semibold mb-3 text-orange-600">
-                  {project.title}
-                </h3>
-
-                <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                  {project.desc}
-                </p>
-
-                <div className="flex gap-3">
-                  <a
-                    href={project.github}
-                    target="_blank"
-                    onClick={(e) => e.stopPropagation()}
-                    className="font-bold px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 text-sm"
-                  >
-                    GitHub
-                  </a>
-
-                  <a
-                    href={project.demo}
-                    target="_blank"
-                    onClick={(e) => e.stopPropagation()}
-                    className="px-4 py-2 bg-orange-600 text-white rounded-lg font-bold hover:bg-orange-500 text-sm"
-                  >
-                    Demo
-                  </a>
-                </div>
-              </div>
-            ))}
+        {projects.length === 0 ? (
+          <div className="text-center text-gray-400">
+            No projects available yet.
           </div>
-        </div>
+        ) : (
+          <>
+            <div className="overflow-x-hidden w-full">
+              <div className="animate-infinite-scroll space-x-6 pb-2">
+                {displayProjects.map((project, index) => (
+                  <div
+                    key={index}
+                    className="min-w-[300px] bg-white p-6 rounded-xl shadow-md transition-all duration-500 hover:-translate-y-2 hover:shadow-xl"
+                  >
+                    <h3 className="text-2xl font-semibold mb-3 text-orange-600">
+                      {project.title}
+                    </h3>
 
-        <div className="flex justify-center mt-10">
-          <Link
-            to="/projects"
-            className="font-bold px-8 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-500 transition duration-500"
-          >
-            See More
-          </Link>
-        </div>
+                    <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                      {project.desc}
+                    </p>
+
+                    <div className="flex gap-3">
+                      {project.github && (
+                        <a
+                          href={project.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="font-bold px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 text-sm"
+                        >
+                          GitHub
+                        </a>
+                      )}
+
+                      {project.demo && (
+                        <a
+                          href={project.demo}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="px-4 py-2 bg-orange-600 text-white rounded-lg font-bold hover:bg-orange-500 text-sm"
+                        >
+                          Demo
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex justify-center mt-10">
+              <Link
+                to="/projects"
+                className="font-bold px-8 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-500 transition duration-500"
+              >
+                See More
+              </Link>
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

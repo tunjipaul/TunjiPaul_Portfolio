@@ -54,7 +54,7 @@ def create_about(about: AboutCreate, db: Session = Depends(get_db)):
         content=about.content,
         image_url=about.image_url,
         skills=about.skills,
-        education=about.education
+        education=about.education,
     )
     db.add(new_about)
     db.commit()
@@ -67,11 +67,11 @@ def update_about(about_id: int, about: AboutUpdate, db: Session = Depends(get_db
     db_about = db.query(About).filter(About.id == about_id).first()
     if not db_about:
         raise HTTPException(status_code=404, detail="About section not found")
-    
+
     update_data = about.dict(exclude_unset=True)
     for key, value in update_data.items():
         setattr(db_about, key, value)
-    
+
     db.commit()
     db.refresh(db_about)
     return db_about
@@ -82,7 +82,7 @@ def delete_about(about_id: int, db: Session = Depends(get_db)):
     db_about = db.query(About).filter(About.id == about_id).first()
     if not db_about:
         raise HTTPException(status_code=404, detail="About section not found")
-    
+
     db.delete(db_about)
     db.commit()
     return None

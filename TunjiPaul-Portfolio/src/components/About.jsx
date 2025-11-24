@@ -5,7 +5,7 @@ function About() {
     content: "",
     skills: [],
     education: "",
-    image_url: ""
+    image_url: "",
   });
 
   useEffect(() => {
@@ -18,7 +18,7 @@ function About() {
             content: about.content || "",
             skills: about.skills || [],
             education: about.education || "",
-            image_url: about.image_url || ""
+            image_url: about.image_url || "",
           });
         }
       })
@@ -63,16 +63,25 @@ function About() {
                   {skill}
                 </span>
               ))
-            : ["HTML", "CSS", "JavaScript", "React", "Tailwind CSS", "Python", "FastAPI", "MySQL", "Git", "GitHub"].map(
-                (skill, idx) => (
-                  <span
-                    key={idx}
-                    className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300 font-bold"
-                  >
-                    {skill}
-                  </span>
-                )
-              )}
+            : [
+                "HTML",
+                "CSS",
+                "JavaScript",
+                "React",
+                "Tailwind CSS",
+                "Python",
+                "FastAPI",
+                "MySQL",
+                "Git",
+                "GitHub",
+              ].map((skill, idx) => (
+                <span
+                  key={idx}
+                  className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300 font-bold"
+                >
+                  {skill}
+                </span>
+              ))}
         </div>
 
         <p className="text-orange-600 text-lg md:text-xl font-semibold mb-3">

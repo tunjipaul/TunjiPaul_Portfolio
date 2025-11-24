@@ -1,19 +1,23 @@
 from fastapi import FastAPI, HTTPException, Depends
+from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, Field
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from sqlalchemy import text
 import uvicorn
 from database import get_db, Base, engine
 from hero_routes import router as hero_router
 from about_routes import router as about_router
+from projects_routes import router as project_router
+from messages_routes import router as message_router
 
 
 try:
     Base.metadata.create_all(bind=engine)
-    print("✓ Tables created/verified successfully")
+    print(" Tables created/verified successfully")
 except Exception as e:
     print(f" Warning: Could not create tables: {e}")
-    print(" Make sure MySQL is running")
+    print("Make sure MySQL is running")
 
 app = FastAPI(title="My Personal Portfolio Backend", version="1.0.0")
 
@@ -27,16 +31,31 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 class UserLogin(BaseModel):
     email: str = Field(..., example="sam@gmail.com")
     password: str = Field(..., example="yourpassword")
 
+
 app.include_router(hero_router)
 app.include_router(about_router)
+app.include_router(project_router)
+app.include_router(message_router)
+
+
+# Custom validation error handler
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc):
+    return JSONResponse(
+        status_code=422,
+        content={"detail": exc.errors()},
+    )
+
 
 @app.get("/")
 def home():
     return {"message": "Welcome to My Personal Portfolio Backend!"}
+
 
 @app.post("/login")
 def login(user: UserLogin, db=Depends(get_db)):
@@ -53,7 +72,6 @@ def login(user: UserLogin, db=Depends(get_db)):
             raise HTTPException(status_code=401, detail="Invalid password")
     else:
         raise HTTPException(status_code=404, detail="User not found")
-    
 
 
 if __name__ == "__main__":

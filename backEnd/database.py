@@ -1,7 +1,18 @@
-from sqlalchemy import create_engine, text, Column, Integer, String, Text, JSON
+from sqlalchemy import (
+    create_engine,
+    text,
+    Column,
+    Integer,
+    String,
+    Text,
+    JSON,
+    DateTime,
+    Boolean,
+)
 from sqlalchemy.orm import sessionmaker, declarative_base
 from dotenv import load_dotenv
 from pymysql.constants import CLIENT
+from datetime import datetime
 import os
 
 
@@ -36,6 +47,28 @@ class About(Base):
     education = Column(String(255))
 
 
+class Project(Base):
+    __tablename__ = "projects"
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(255), nullable=False)
+    desc = Column(String(1000), nullable=False)
+    github = Column(String(500), nullable=True)
+    demo = Column(String(500), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class Message(Base):
+    __tablename__ = "messages"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(255), nullable=False)
+    email = Column(String(255), nullable=False)
+    subject = Column(String(255), nullable=False)
+    message = Column(Text, nullable=False)
+    is_read = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 def get_db():
     db = SessionLocal()
     try:
@@ -60,11 +93,16 @@ def create_tables():
         insert_admin_query = text(
             """
         INSERT IGNORE INTO users (email, password)
-        VALUES ('tunjipaul007@gmail.com', 'Olatunji007.');
+        VALUES (:email, :password);
         """
         )
 
-        db.execute(insert_admin_query)
+        admin_email = os.getenv("ADMIN_LOGIN_EMAIL", "admin@example.com")
+        admin_password = os.getenv("ADMIN_LOGIN_PASSWORD", "password123")
+
+        db.execute(
+            insert_admin_query, {"email": admin_email, "password": admin_password}
+        )
 
         # Hero table
         create_hero_query = text(
@@ -96,9 +134,26 @@ def create_tables():
         )
         db.execute(create_about_query)
 
+        # Projects table
+        create_projects_query = text(
+            """
+        CREATE TABLE IF NOT EXISTS projects (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            title VARCHAR(255) NOT NULL,
+            desc VARCHAR(1000) NOT NULL,
+            github VARCHAR(500),
+            demo VARCHAR(500),
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        );
+        """
+        )
+        db.execute(create_projects_query)
+
         db.commit()
 
         print("Users table ensured and admin inserted.")
+        print("Projects table created/verified successfully")
 
 
 if __name__ == "__main__":
