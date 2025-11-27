@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-
+import { FaGithub } from "react-icons/fa";
 function Projects() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -64,22 +64,22 @@ function Projects() {
           </div>
         ) : (
           <>
-            <div className="overflow-x-hidden w-full">
-              <div className="animate-infinite-scroll space-x-6 pb-2">
+            <div className="overflow-x-hidden w-full ">
+              <div className="animate-infinite-scroll space-x-6 pb-2 ">
                 {displayProjects.map((project, index) => (
                   <div
                     key={index}
-                    className="min-w-[300px] bg-white p-6 rounded-xl shadow-md transition-all duration-500 hover:-translate-y-2 hover:shadow-xl"
+                    className="min-w-[300px] bg-white p-6 rounded-xl shadow-md transition-all duration-500 hover:-translate-y-2 hover:shadow-xl flex-col items-center"
                   >
-                    <h3 className="text-2xl font-semibold mb-3 text-orange-600">
+                    <h3 className="text-2xl font-semibold mb-3 text-orange-600 flex-col items-center ">
                       {project.title}
                     </h3>
 
-                    <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                    <p className=" w-132 flex-col items-center text-gray-600 text-sm leading-relaxed mb-4 wrap-break-word">
                       {project.desc}
                     </p>
 
-                    <div className="flex gap-3">
+                    <div className="flex gap-3 justify-center">
                       {project.github && (
                         <a
                           href={project.github}
@@ -111,7 +111,7 @@ function Projects() {
 
             <div className="flex justify-center mt-10">
               <Link
-                to="/projects"
+                to="/moreprojects"
                 className="font-bold px-8 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-500 transition duration-500"
               >
                 See More

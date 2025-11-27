@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Admin from "./pages/Admin";
 import AdminDashboard from "./pages/AdminDashboard";
+import MoreProjects from "./pages/MoreProjects";
 
 function ProtectedRoute({ children }) {
   const isLoggedIn = localStorage.getItem("isLoggedIn");
@@ -13,6 +14,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/admin" element={<Admin />} />
+      <Route path="/moreprojects" element={<MoreProjects/>} />
       <Route
         path="/dashboard"
         element={

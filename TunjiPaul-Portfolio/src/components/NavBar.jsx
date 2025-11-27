@@ -16,7 +16,7 @@ function NavBar() {
     <nav className="bg-orange-50 shadow-md fixed w-full z-10">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <img
               src="https://res.cloudinary.com/dbadkovof/image/upload/v1763293388/Gemini_Generated_Image_kskrlhkskrlhkskr-removebg-preview_kqycov.png"
               alt="Tunji Paul Logo"
