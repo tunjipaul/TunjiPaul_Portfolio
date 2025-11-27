@@ -11,16 +11,25 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import sessionmaker, declarative_base
 from dotenv import load_dotenv
-from pymysql.constants import CLIENT
 from datetime import datetime
 import os
 
 
 load_dotenv()
 
-db_url = f"mysql+pymysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
+# Read DATABASE_URL from environment
+db_url = os.getenv("DATABASE_URL")
 
-engine = create_engine(db_url, connect_args={"client_flag": CLIENT.MULTI_STATEMENTS})
+# For local development, construct from individual variables if DATABASE_URL not set
+if not db_url:
+    db_user = os.getenv("DB_USER", "postgres")
+    db_password = os.getenv("DB_PASSWORD", "")
+    db_host = os.getenv("DB_HOST", "localhost")
+    db_port = os.getenv("DB_PORT", "5432")
+    db_name = os.getenv("DB_NAME", "portfolio_db")
+    db_url = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+
+engine = create_engine(db_url)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
@@ -79,21 +88,23 @@ def get_db():
 
 def create_tables():
     with engine.begin() as db:
-        create_table_query = text(
+        # Users table
+        create_user_query = text(
             """
         CREATE TABLE IF NOT EXISTS users (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             email VARCHAR(255) NOT NULL UNIQUE,
             password VARCHAR(255) NOT NULL
         );
         """
         )
-        db.execute(create_table_query)
+        db.execute(create_user_query)
 
         insert_admin_query = text(
             """
-        INSERT IGNORE INTO users (email, password)
-        VALUES (:email, :password);
+        INSERT INTO users (email, password)
+        VALUES (:email, :password)
+        ON CONFLICT (email) DO NOTHING;
         """
         )
 
@@ -108,7 +119,7 @@ def create_tables():
         create_hero_query = text(
             """
         CREATE TABLE IF NOT EXISTS hero (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             title VARCHAR(255) NOT NULL,
             subtitle TEXT NOT NULL,
             image_url VARCHAR(500),
@@ -117,14 +128,14 @@ def create_tables():
         );
         """
         )
-
         db.execute(create_hero_query)
 
         # About table
         create_about_query = text(
             """
         CREATE TABLE IF NOT EXISTS about (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
+            title VARCHAR(255),
             content TEXT,
             image_url VARCHAR(500),
             skills JSON,
@@ -138,13 +149,13 @@ def create_tables():
         create_projects_query = text(
             """
         CREATE TABLE IF NOT EXISTS projects (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             title VARCHAR(255) NOT NULL,
             desc VARCHAR(1000) NOT NULL,
             github VARCHAR(500),
             demo VARCHAR(500),
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         """
         )

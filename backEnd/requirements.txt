@@ -1,8 +1,8 @@
 fastapi
 uvicorn 
 sqlalchemy 
-pymysql
+psycopg2-binary
 bcrypt
 python-dotenv 
 pydantic
-jwt
+PyJWT
