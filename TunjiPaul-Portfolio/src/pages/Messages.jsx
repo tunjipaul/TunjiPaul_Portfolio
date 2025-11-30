@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import API_URL from "./config";
 
 function Messages() {
   const [messages, setMessages] = useState([]);
@@ -15,7 +16,7 @@ function Messages() {
   const fetchMessages = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:8000/api/messages");
+      const response = await fetch(`${API_URL}/api/messages`);
       if (!response.ok) throw new Error("Failed to fetch messages");
       const data = await response.json();
       setMessages(data);
@@ -30,7 +31,7 @@ function Messages() {
 
   const toggleRead = async (id, isRead) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/messages/${id}`, {
+      const response = await fetch(`${API_URL}/api/messages/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ is_read: !isRead }),
@@ -54,7 +55,7 @@ function Messages() {
       return;
 
     try {
-      const response = await fetch(`http://localhost:8000/api/messages/${id}`, {
+      const response = await fetch(`${API_URL}/api/messages/${id}`, {
         method: "DELETE",
       });
 
@@ -77,7 +78,7 @@ function Messages() {
 
     setSendingReply(true);
     try {
-      const response = await fetch("http://localhost:8000/api/messages/reply", {
+      const response = await fetch(`${API_URL}/api/messages/reply`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

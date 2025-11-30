@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import API_URL from './config';
 
 function About() {
   const [aboutData, setAboutData] = useState({
@@ -9,7 +10,7 @@ function About() {
   });
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/about") // match your FastAPI route
+    fetch(`${API_URL}/api/about`) // match your FastAPI route
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import API_URL from "./config";
 function ManageProjects() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,7 +23,7 @@ function ManageProjects() {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:8000/api/projects/manage");
+      const response = await fetch(`${API_URL}/api/projects`);
       if (!response.ok) throw new Error("Failed to fetch projects");
       const data = await response.json();
       setProjects(data);
@@ -43,7 +43,7 @@ function ManageProjects() {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/api/projects", {
+      const response = await fetch(`${API_URL}/api/projects`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -73,7 +73,7 @@ function ManageProjects() {
       return;
 
     try {
-      const response = await fetch(`http://localhost:8000/api/projects/${id}`, {
+      const response = await fetch(`${API_URL}/api/projects/${id}`, {
         method: "DELETE",
       });
 
@@ -101,7 +101,7 @@ function ManageProjects() {
     }
 
     try {
-      const response = await fetch(`http://localhost:8000/api/projects/${id}`, {
+      const response = await fetch(`${API_URL}/api/projects/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import API_URL from "./config";
 
 function ManageHero() {
   const [hero, setHero] = useState(null);
@@ -16,7 +17,7 @@ function ManageHero() {
   useEffect(() => {
     async function fetchOrCreateHero() {
       try {
-        const res = await fetch("http://localhost:8000/api/hero/");
+        const res = await fetch(`${API_URL}/api/hero`);
         const data = await res.json();
 
         if (data.length > 0) {
@@ -24,7 +25,7 @@ function ManageHero() {
           setHeroId(data[0].id);
         } else {
           // No hero exists, create one
-          const createRes = await fetch("http://localhost:8000/api/hero/", {
+          const createRes = await fetch(`${API_URL}/api/hero`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(defaultHero),
@@ -53,7 +54,7 @@ function ManageHero() {
       return;
     }
     try {
-      const res = await fetch(`http://localhost:8000/api/hero/${heroId}`, {
+      const res = await fetch(`${API_URL}/api/hero/${heroId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(hero),

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import API_URL from "./config";
 
 function AboutSection() {
   const [aboutId, setAboutId] = useState(null);
@@ -9,7 +10,7 @@ function AboutSection() {
   const [imageUrl, setImageUrl] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/about")
+    fetch(`${API_URL}/api/about`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
@@ -41,7 +42,7 @@ function AboutSection() {
       return;
     }
 
-    fetch(`http://localhost:8000/api/about/${aboutId}`, {
+    fetch(`${API_URL}/api/about/${aboutId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
