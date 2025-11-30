@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import API_URL from "./config";
+import API_URL from "../config";
 
 function ManageHero() {
   const [hero, setHero] = useState(null);
