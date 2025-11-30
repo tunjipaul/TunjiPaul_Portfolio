@@ -21,7 +21,12 @@ except Exception as e:
 
 app = FastAPI(title="My Personal Portfolio Backend", version="1.0.0")
 
-origins = ["http://localhost:5173", "http://localhost:3000", "http://localhost:5174"]
+origins = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://localhost:5174",
+    "https://tunji-paul-portfolio.vercel.app",
+]
 
 app.add_middleware(
     CORSMiddleware,
