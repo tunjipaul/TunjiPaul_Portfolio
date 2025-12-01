@@ -151,7 +151,7 @@ def create_tables():
         CREATE TABLE IF NOT EXISTS projects (
             id SERIAL PRIMARY KEY,
             title VARCHAR(255) NOT NULL,
-            desc VARCHAR(1000) NOT NULL,
+            "desc" VARCHAR(1000) NOT NULL,
             github VARCHAR(500),
             demo VARCHAR(500),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
