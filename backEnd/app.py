@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
 import uvicorn
-from database import get_db, Base, engine
+from database import get_db, Base, engine, create_tables
 from hero_routes import router as hero_router
 from about_routes import router as about_router
 from projects_routes import router as project_router
@@ -13,11 +13,11 @@ from messages_routes import router as message_router
 
 
 try:
-    Base.metadata.create_all(bind=engine)
-    print(" Tables created/verified successfully")
+    create_tables()  # Changed this line
+    print("Tables created/verified successfully")
 except Exception as e:
-    print(f" Warning: Could not create tables: {e}")
-    print("Make sure MySQL is running")
+    print(f"Warning: Could not create tables: {e}")
+    print("Make sure PostgreSQL is running")
 
 app = FastAPI(title="My Personal Portfolio Backend", version="1.0.0")
 
