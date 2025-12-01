@@ -68,7 +68,7 @@ def update_hero(hero_id: int, hero: HeroUpdate, db: Session = Depends(get_db)):
     if not db_hero:
         raise HTTPException(status_code=404, detail=f"Hero with id {hero_id} not found")
 
-    update_data = hero.dict(exclude_unset=True)
+    update_data = hero.model_dump(exclude_unset=True)
     for key, value in update_data.items():
         setattr(db_hero, key, value)
 
