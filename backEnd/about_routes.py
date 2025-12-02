@@ -34,7 +34,7 @@ class AboutResponse(AboutBase):
         from_attributes = True
 
 
-@router.get("/", response_model=List[AboutResponse])
+@router.get("", response_model=List[AboutResponse])
 def get_all_about(db: Session = Depends(get_db)):
     return db.query(About).all()
 
@@ -47,7 +47,7 @@ def get_about(about_id: int, db: Session = Depends(get_db)):
     return about
 
 
-@router.post("/", response_model=AboutResponse, status_code=201)
+@router.post("", response_model=AboutResponse, status_code=201)
 def create_about(about: AboutCreate, db: Session = Depends(get_db)):
     new_about = About(
         title=about.title,

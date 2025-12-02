@@ -34,7 +34,7 @@ class HeroResponse(HeroBase):
         from_attributes = True
 
 
-@router.get("/", response_model=List[HeroResponse])
+@router.get("", response_model=List[HeroResponse])
 def get_all_heroes(db: Session = Depends(get_db)):
     return db.query(Hero).all()
 
@@ -47,7 +47,7 @@ def get_hero(hero_id: int, db: Session = Depends(get_db)):
     return hero
 
 
-@router.post("/", response_model=HeroResponse, status_code=201)
+@router.post("", response_model=HeroResponse, status_code=201)
 def create_hero(hero: HeroCreate, db: Session = Depends(get_db)):
     new_hero = Hero(
         title=hero.title,
