@@ -78,6 +78,14 @@ class Message(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
+class Skill(Base):
+    __tablename__ = "skills"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(255), nullable=False, unique=True)
+    category = Column(String(255), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 def get_db():
     db = SessionLocal()
     try:
@@ -160,6 +168,35 @@ def create_tables():
         """
         )
         db.execute(create_projects_query)
+
+        # Skills table
+        create_skills_query = text(
+            """
+        CREATE TABLE IF NOT EXISTS skills (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(255) NOT NULL UNIQUE,
+            category VARCHAR(255) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        """
+        )
+        db.execute(create_skills_query)
+
+        # Messages table
+        create_messages_query = text(
+            """
+        CREATE TABLE IF NOT EXISTS messages (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            subject VARCHAR(255) NOT NULL,
+            message TEXT NOT NULL,
+            is_read BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        """
+        )
+        db.execute(create_messages_query)
 
         db.commit()
 
