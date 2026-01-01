@@ -10,11 +10,10 @@ from hero_routes import router as hero_router
 from about_routes import router as about_router
 from projects_routes import router as project_router
 from messages_routes import router as message_router
-from skills_routes import router as skills_router
 
 
 try:
-    create_tables() 
+    create_tables()  # Changed this line
     print("Tables created/verified successfully")
 except Exception as e:
     print(f"Warning: Could not create tables: {e}")
@@ -47,10 +46,9 @@ app.include_router(hero_router)
 app.include_router(about_router)
 app.include_router(project_router)
 app.include_router(message_router)
-app.include_router(skills_router)
 
 
-
+# Custom validation error handler
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc):
     return JSONResponse(

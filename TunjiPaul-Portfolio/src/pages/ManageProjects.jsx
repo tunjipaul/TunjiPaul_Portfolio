@@ -15,7 +15,7 @@ function ManageProjects() {
   const [editGithub, setEditGithub] = useState("");
   const [editDemo, setEditDemo] = useState("");
 
-  
+  // Fetch projects on component mount
   useEffect(() => {
     fetchProjects();
   }, []);

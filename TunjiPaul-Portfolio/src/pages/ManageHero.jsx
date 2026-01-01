@@ -24,7 +24,7 @@ function ManageHero() {
           setHero(data[0]);
           setHeroId(data[0].id);
         } else {
-         
+          // No hero exists, create one
           const createRes = await fetch(`${API_URL}/api/hero`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },

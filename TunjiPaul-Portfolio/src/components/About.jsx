@@ -50,7 +50,40 @@ function About() {
             "I'm an AI Developer with a strong foundation in building intelligent, scalable systems and modern frontend solutions. My work blends engineering, design, and problem-solving across multiple layers of technology."}
         </p>
 
-       
+        <p className="text-orange-600 text-lg md:text-xl font-semibold mb-3">
+          Skills
+        </p>
+
+        <div className="flex flex-wrap gap-3 mb-6">
+          {aboutData.skills.length > 0
+            ? aboutData.skills.map((skill, idx) => (
+                <span
+                  key={idx}
+                  className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300 font-bold"
+                >
+                  {skill}
+                </span>
+              ))
+            : [
+                "HTML",
+                "CSS",
+                "JavaScript",
+                "React",
+                "Tailwind CSS",
+                "Python",
+                "FastAPI",
+                "MySQL",
+                "Git",
+                "GitHub",
+              ].map((skill, idx) => (
+                <span
+                  key={idx}
+                  className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm md:text-base transition-all duration-700 transform hover:scale-105 hover:bg-orange-300 font-bold"
+                >
+                  {skill}
+                </span>
+              ))}
+        </div>
 
         <p className="text-orange-600 text-lg md:text-xl font-semibold mb-3">
           Education
