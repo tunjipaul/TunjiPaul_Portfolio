@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional, List
 from database import get_db, Skill
+from datetime import datetime
 
 router = APIRouter(prefix="/api/skills", tags=["Skills"])
 
@@ -23,7 +24,7 @@ class SkillUpdate(BaseModel):
 
 class SkillResponse(SkillBase):
     id: int
-    created_at: Optional[str] = None
+    created_at: datetime
 
     class Config:
         from_attributes = True

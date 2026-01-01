@@ -36,15 +36,15 @@ export default function ManageSkills() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.name.trim()) {
       setError("Skill name is required");
       return;
@@ -60,12 +60,15 @@ export default function ManageSkills() {
         method,
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error("Failed to save skill");
+      if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Backend error:", errorData);
+      throw new Error(errorData.detail || "Failed to save skill");
+    }
 
       setFormData({ name: "", category: "Frontend" });
       setEditingId(null);
@@ -92,7 +95,7 @@ export default function ManageSkills() {
       const response = await fetch(`${API_URL}/api/skills/${id}`, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          
         },
       });
 
@@ -121,7 +124,9 @@ export default function ManageSkills() {
   return (
     <div className="min-h-screen bg-black px-6 md:px-20 py-12">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold text-orange-600 mb-8">Manage Skills</h1>
+        <h1 className="text-4xl font-bold text-orange-600 mb-8">
+          Manage Skills
+        </h1>
 
         {error && (
           <div className="mb-6 p-4 bg-red-900 text-red-100 rounded-lg">
@@ -160,8 +165,10 @@ export default function ManageSkills() {
                 onChange={handleInputChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-600"
               >
-                {categories.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
                 ))}
               </select>
             </div>
@@ -193,7 +200,9 @@ export default function ManageSkills() {
           <table className="w-full">
             <thead className="bg-orange-600 text-white">
               <tr>
-                <th className="px-6 py-4 text-left font-semibold">Skill Name</th>
+                <th className="px-6 py-4 text-left font-semibold">
+                  Skill Name
+                </th>
                 <th className="px-6 py-4 text-left font-semibold">Category</th>
                 <th className="px-6 py-4 text-left font-semibold">Actions</th>
               </tr>
@@ -201,13 +210,19 @@ export default function ManageSkills() {
             <tbody>
               {skills.length === 0 ? (
                 <tr>
-                  <td colSpan="3" className="px-6 py-8 text-center text-gray-500">
+                  <td
+                    colSpan="3"
+                    className="px-6 py-8 text-center text-gray-500"
+                  >
                     No skills added yet. Create one to get started!
                   </td>
                 </tr>
               ) : (
-                skills.map(skill => (
-                  <tr key={skill.id} className="border-b hover:bg-orange-50 transition">
+                skills.map((skill) => (
+                  <tr
+                    key={skill.id}
+                    className="border-b hover:bg-orange-50 transition"
+                  >
                     <td className="px-6 py-4 font-semibold text-gray-800">
                       {skill.name}
                     </td>

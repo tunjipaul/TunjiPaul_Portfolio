@@ -4,8 +4,6 @@ import API_URL from "../config";
 function AboutSection() {
   const [aboutId, setAboutId] = useState(null);
   const [aboutText, setAboutText] = useState("");
-  const [skills, setSkills] = useState([]);
-  const [newSkill, setNewSkill] = useState("");
   const [education, setEducation] = useState("");
   const [imageUrl, setImageUrl] = useState("");
 
@@ -17,7 +15,6 @@ function AboutSection() {
           const about = data[0];
           setAboutId(about.id);
           setAboutText(about.content || "");
-          setSkills(about.skills || []);
           setEducation(about.education || "");
           setImageUrl(about.image_url || "");
         }
@@ -25,16 +22,8 @@ function AboutSection() {
       .catch((err) => console.error(err));
   }, []);
 
-  const handleAddSkill = () => {
-    if (newSkill.trim() && !skills.includes(newSkill.trim())) {
-      setSkills([...skills, newSkill.trim()]);
-      setNewSkill("");
-    }
-  };
 
-  const handleRemoveSkill = (skillToRemove) => {
-    setSkills(skills.filter((s) => s !== skillToRemove));
-  };
+  
 
   const handleSave = () => {
     if (!aboutId) {
@@ -47,7 +36,6 @@ function AboutSection() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         content: aboutText,
-        skills: skills,
         education: education,
         image_url: imageUrl,
       }),
@@ -100,39 +88,6 @@ function AboutSection() {
             className="w-full border border-gray-400 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-orange-600 resize-none"
             rows={6}
           />
-        </div>
-
-        <div>
-          <label className="block text-gray-700 font-semibold mb-2">
-            Skills
-          </label>
-          <div className="flex gap-2 flex-wrap mb-2">
-            {skills.map((skill, index) => (
-              <span
-                key={index}
-                className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm font-bold cursor-pointer hover:bg-orange-300"
-                onClick={() => handleRemoveSkill(skill)}
-              >
-                {skill} &times;
-              </span>
-            ))}
-          </div>
-
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={newSkill}
-              onChange={(e) => setNewSkill(e.target.value)}
-              className="flex-1 border border-gray-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-600"
-              placeholder="Add a skill"
-            />
-            <button
-              onClick={handleAddSkill}
-              className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-500"
-            >
-              Add
-            </button>
-          </div>
         </div>
 
         <div>

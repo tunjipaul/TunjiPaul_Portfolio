@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import ManageHero from "./ManageHero";
 import ManageProjects from "./ManageProjects";
 import AboutSection from "./AboutSection";
+import ManageSkills from "./ManageSkills";
 import Messages from "./Messages";
 import DashboardHome from "./DashboardHome";
 
@@ -38,6 +39,8 @@ function AdminDashboard() {
         return <ManageHero />;
       case "about":
         return <AboutSection />;
+      case "skills":
+        return <ManageSkills />;
       case "projects":
         return <ManageProjects />;
       case "messages":
@@ -90,6 +93,16 @@ function AdminDashboard() {
           >
             About Section
           </button>
+          <button
+            onClick={() => {
+              setActiveSection("skills");
+              setOpen(false);
+            }}
+            className="font-bold block w-full text-left px-3 py-2 rounded-lg hover:bg-orange-100 text-gray-700"
+          >
+            Manage Skills
+          </button>
+
           <button
             onClick={() => {
               setActiveSection("projects");
