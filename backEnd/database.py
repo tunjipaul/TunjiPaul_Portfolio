@@ -11,16 +11,16 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import sessionmaker, declarative_base
 from dotenv import load_dotenv
-from datetime import datetime
+from datetime import datetime, timezone
 import os
 
 
 load_dotenv()
 
-# Read DATABASE_URL from environment
+
 db_url = os.getenv("DATABASE_URL")
 
-# For local development, construct from individual variables if DATABASE_URL not set
+
 if not db_url:
     db_user = os.getenv("DB_USER", "postgres")
     db_password = os.getenv("DB_PASSWORD", "")
@@ -35,7 +35,6 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
-# ------------------- MODELS -------------------
 class Hero(Base):
     __tablename__ = "hero"
     id = Column(Integer, primary_key=True, index=True)
@@ -63,8 +62,12 @@ class Project(Base):
     desc = Column(String(1000), nullable=False)
     github = Column(String(500), nullable=True)
     demo = Column(String(500), nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(
+        DateTime,
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
 
 
 class Message(Base):
@@ -75,7 +78,7 @@ class Message(Base):
     subject = Column(String(255), nullable=False)
     message = Column(Text, nullable=False)
     is_read = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
 class Skill(Base):
@@ -83,7 +86,8 @@ class Skill(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False, unique=True)
     category = Column(String(255), nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    icon = Column(String(255), nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
 def get_db():
@@ -96,7 +100,7 @@ def get_db():
 
 def create_tables():
     with engine.begin() as db:
-        # Users table
+
         create_user_query = text(
             """
         CREATE TABLE IF NOT EXISTS users (
@@ -123,7 +127,6 @@ def create_tables():
             insert_admin_query, {"email": admin_email, "password": admin_password}
         )
 
-        # Hero table
         create_hero_query = text(
             """
         CREATE TABLE IF NOT EXISTS hero (
@@ -138,7 +141,6 @@ def create_tables():
         )
         db.execute(create_hero_query)
 
-        # About table
         create_about_query = text(
             """
         CREATE TABLE IF NOT EXISTS about (
@@ -153,7 +155,6 @@ def create_tables():
         )
         db.execute(create_about_query)
 
-        # Projects table
         create_projects_query = text(
             """
         CREATE TABLE IF NOT EXISTS projects (
@@ -169,20 +170,19 @@ def create_tables():
         )
         db.execute(create_projects_query)
 
-        # Skills table
         create_skills_query = text(
             """
         CREATE TABLE IF NOT EXISTS skills (
             id SERIAL PRIMARY KEY,
             name VARCHAR(255) NOT NULL UNIQUE,
             category VARCHAR(255) NOT NULL,
+            icon VARCHAR(255),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         """
         )
         db.execute(create_skills_query)
 
-        # Messages table
         create_messages_query = text(
             """
         CREATE TABLE IF NOT EXISTS messages (

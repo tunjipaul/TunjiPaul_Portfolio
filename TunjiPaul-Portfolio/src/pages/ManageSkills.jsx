@@ -9,6 +9,7 @@ export default function ManageSkills() {
   const [formData, setFormData] = useState({
     name: "",
     category: "Frontend",
+    icon: "", // NEW: Icon field
   });
   const [editingId, setEditingId] = useState(null);
 
@@ -65,12 +66,12 @@ export default function ManageSkills() {
       });
 
       if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Backend error:", errorData);
-      throw new Error(errorData.detail || "Failed to save skill");
-    }
+        const errorData = await response.json();
+        console.error("Backend error:", errorData);
+        throw new Error(errorData.detail || "Failed to save skill");
+      }
 
-      setFormData({ name: "", category: "Frontend" });
+      setFormData({ name: "", category: "Frontend", icon: "" });
       setEditingId(null);
       fetchSkills();
       setError(null);
@@ -84,6 +85,7 @@ export default function ManageSkills() {
     setFormData({
       name: skill.name,
       category: skill.category || "Frontend",
+      icon: skill.icon || "", // NEW: Load icon if exists
     });
     setEditingId(skill.id);
   };
@@ -94,9 +96,6 @@ export default function ManageSkills() {
     try {
       const response = await fetch(`${API_URL}/api/skills/${id}`, {
         method: "DELETE",
-        headers: {
-          
-        },
       });
 
       if (!response.ok) throw new Error("Failed to delete skill");
@@ -109,7 +108,7 @@ export default function ManageSkills() {
   };
 
   const handleCancel = () => {
-    setFormData({ name: "", category: "Frontend" });
+    setFormData({ name: "", category: "Frontend", icon: "" });
     setEditingId(null);
   };
 
@@ -173,6 +172,39 @@ export default function ManageSkills() {
               </select>
             </div>
 
+            {/* NEW: Icon Input Field */}
+            <div>
+              <label className="block text-gray-700 font-semibold mb-2">
+                Icon (Optional)
+              </label>
+              <input
+                type="text"
+                name="icon"
+                value={formData.icon}
+                onChange={handleInputChange}
+                placeholder="e.g., FaReact, SiTailwindcss, FaPython"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-600"
+              />
+              <p className="text-sm text-gray-600 mt-2">
+                Leave empty to use default icon mapping. Common icons:
+              </p>
+              <div className="text-xs text-gray-500 mt-1 space-y-1">
+                <p>• <span className="font-mono bg-gray-200 px-1 rounded">FaReact</span>, <span className="font-mono bg-gray-200 px-1 rounded">FaPython</span>, <span className="font-mono bg-gray-200 px-1 rounded">FaNodeJs</span>, <span className="font-mono bg-gray-200 px-1 rounded">FaDocker</span></p>
+                <p>• <span className="font-mono bg-gray-200 px-1 rounded">SiTailwindcss</span>, <span className="font-mono bg-gray-200 px-1 rounded">SiTypescript</span>, <span className="font-mono bg-gray-200 px-1 rounded">SiMongodb</span>, <span className="font-mono bg-gray-200 px-1 rounded">SiPostgresql</span></p>
+                <p className="text-blue-600">
+                  Browse all icons at:{" "}
+                  <a 
+                    href="https://react-icons.github.io/react-icons/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="underline hover:text-blue-700"
+                  >
+                    react-icons.github.io
+                  </a>
+                </p>
+              </div>
+            </div>
+
             <div className="flex gap-4">
               <button
                 type="submit"
@@ -204,6 +236,7 @@ export default function ManageSkills() {
                   Skill Name
                 </th>
                 <th className="px-6 py-4 text-left font-semibold">Category</th>
+                <th className="px-6 py-4 text-left font-semibold">Icon</th>
                 <th className="px-6 py-4 text-left font-semibold">Actions</th>
               </tr>
             </thead>
@@ -211,7 +244,7 @@ export default function ManageSkills() {
               {skills.length === 0 ? (
                 <tr>
                   <td
-                    colSpan="3"
+                    colSpan="4"
                     className="px-6 py-8 text-center text-gray-500"
                   >
                     No skills added yet. Create one to get started!
@@ -230,6 +263,17 @@ export default function ManageSkills() {
                       <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm font-medium">
                         {skill.category || "Frontend"}
                       </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      {skill.icon ? (
+                        <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-mono">
+                          {skill.icon}
+                        </span>
+                      ) : (
+                        <span className="text-gray-400 text-sm italic">
+                          Default
+                        </span>
+                      )}
                     </td>
                     <td className="px-6 py-4 flex gap-3">
                       <button

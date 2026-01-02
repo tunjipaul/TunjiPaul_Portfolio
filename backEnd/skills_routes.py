@@ -11,6 +11,7 @@ router = APIRouter(prefix="/api/skills", tags=["Skills"])
 class SkillBase(BaseModel):
     name: str
     category: str
+    icon: Optional[str] = None
 
 
 class SkillCreate(SkillBase):
@@ -20,11 +21,13 @@ class SkillCreate(SkillBase):
 class SkillUpdate(BaseModel):
     name: Optional[str] = None
     category: Optional[str] = None
+    icon: Optional[str] = None
 
 
 class SkillResponse(SkillBase):
     id: int
     created_at: datetime
+    
 
     class Config:
         from_attributes = True
