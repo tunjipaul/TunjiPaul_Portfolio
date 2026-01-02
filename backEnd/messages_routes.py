@@ -3,15 +3,16 @@ from pydantic import BaseModel, Field, EmailStr
 from sqlalchemy.orm import Session
 from datetime import datetime
 from database import get_db, Message
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 import os
 from dotenv import load_dotenv
+import resend
 
 load_dotenv()
 
 router = APIRouter(prefix="/api/messages", tags=["messages"])
+
+# Set Resend API key
+resend.api_key = os.getenv("RESEND_API_KEY")
 
 
 # Pydantic Models
@@ -41,53 +42,54 @@ class MessageUpdate(BaseModel):
     is_read: bool = Field(..., example=True)
 
 
-# Email function
+# Email function using Resend
 def send_email_notification(name: str, email: str, subject: str, message_content: str):
-    """Send email notification to admin"""
+    """Send email notification to admin using Resend"""
     try:
-        sender_email = os.getenv("SENDER_EMAIL")
-        sender_password = os.getenv("SENDER_PASSWORD")
         receiver_email = os.getenv("ADMIN_EMAIL")
 
-        if not all([sender_email, sender_password, receiver_email]):
-            print(
-                "Warning: Email credentials not configured. Message saved but email not sent."
-            )
+        if not receiver_email:
+            print("Warning: ADMIN_EMAIL not configured. Message saved but email not sent.")
             return
 
-        # Create email message
-        msg = MIMEMultipart()
-        msg["From"] = sender_email
-        msg["To"] = receiver_email
-        msg["Subject"] = f"New Message: {subject}"
+        if not resend.api_key:
+            print("Warning: RESEND_API_KEY not configured. Message saved but email not sent.")
+            return
 
-        body = f"""
-        New message from your portfolio contact form:
+        params = {
+            "from": "Portfolio Contact <onboarding@resend.dev>",  # Use this for testing
+            "to": [receiver_email],
+            "subject": f"New Portfolio Message: {subject}",
+            "html": f"""
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2 style="color: #333;">New Message from Portfolio Contact Form</h2>
+                    
+                    <div style="background-color: #f5f5f5; padding: 20px; border-radius: 5px; margin: 20px 0;">
+                        <p><strong>Name:</strong> {name}</p>
+                        <p><strong>Email:</strong> {email}</p>
+                        <p><strong>Subject:</strong> {subject}</p>
+                    </div>
+                    
+                    <div style="margin: 20px 0;">
+                        <h3 style="color: #555;">Message:</h3>
+                        <p style="line-height: 1.6;">{message_content}</p>
+                    </div>
+                    
+                    <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+                    
+                    <p style="color: #666; font-size: 14px;">
+                        <strong>Reply to:</strong> <a href="mailto:{email}">{email}</a>
+                    </p>
+                </div>
+            """,
+            "reply_to": email  # Allows you to hit "reply" in your email client
+        }
+
+        response = resend.Emails.send(params)
+        print(f"✓ Email sent successfully to {receiver_email} (ID: {response['id']})")
         
-        Name: {name}
-        Email: {email}
-        Subject: {subject}
-        
-        Message:
-        {message_content}
-        
-        ---
-        Reply to: {email}
-        """
-
-        msg.attach(MIMEText(body, "plain"))
-
-        # Send email
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-            server.login(sender_email, sender_password)
-            server.send_message(msg)
-
-        print(f"✓ Email sent successfully to {receiver_email}")
     except Exception as e:
         print(f"Warning: Could not send email: {e}")
-
-
-# Routes
 
 
 @router.get("", response_model=list[MessageResponse])
@@ -156,40 +158,34 @@ class ReplyCreate(BaseModel):
 
 @router.post("/reply", status_code=status.HTTP_200_OK)
 def send_reply(reply: ReplyCreate, db: Session = Depends(get_db)):
-    """Send a reply to a message"""
+    """Send a reply to a message using Resend"""
     try:
-        sender_email = os.getenv("SENDER_EMAIL")
-        sender_password = os.getenv("SENDER_PASSWORD")
-
-        if not all([sender_email, sender_password]):
+        if not resend.api_key:
             raise HTTPException(
-                status_code=500, detail="Email credentials not configured"
+                status_code=500, detail="RESEND_API_KEY not configured"
             )
 
-        # Create email message
-        msg = MIMEMultipart()
-        msg["From"] = sender_email
-        msg["To"] = reply.recipient_email
-        msg["Subject"] = "Re: Your message from portfolio"
+        params = {
+            "from": "Portfolio Contact <onboarding@resend.dev>",  # Use this for testing
+            "to": [reply.recipient_email],
+            "subject": "Re: Your message from portfolio",
+            "html": f"""
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <p style="line-height: 1.6;">{reply.reply_text}</p>
+                    
+                    <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+                    
+                    <p style="color: #666; font-size: 12px;">
+                        This is a reply to your message sent through the portfolio contact form.
+                    </p>
+                </div>
+            """
+        }
 
-        body = f"""
-{reply.reply_text}
-
----
-This is a reply to your message sent through the portfolio contact form.
-Do not reply to this email. Contact me through the portfolio instead.
-        """
-
-        msg.attach(MIMEText(body, "plain"))
-
-        # Send email
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-            server.login(sender_email, sender_password)
-            server.send_message(msg)
-
-        print(f" Reply sent successfully to {reply.recipient_email}")
-        return {"message": "Reply sent successfully"}
+        response = resend.Emails.send(params)
+        print(f"✓ Reply sent successfully to {reply.recipient_email} (ID: {response['id']})")
+        return {"message": "Reply sent successfully", "email_id": response['id']}
 
     except Exception as e:
-        print(f" Error sending reply: {e}")
+        print(f"✗ Error sending reply: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to send reply: {str(e)}")

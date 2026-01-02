@@ -8,3 +8,4 @@ pydantic
 PyJWT
 email-validator
 alembic
+resend
