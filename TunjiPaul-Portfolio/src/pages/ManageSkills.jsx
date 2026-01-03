@@ -9,7 +9,7 @@ export default function ManageSkills() {
   const [formData, setFormData] = useState({
     name: "",
     category: "Frontend",
-    icon: "", // NEW: Icon field
+    icon: "",
   });
   const [editingId, setEditingId] = useState(null);
 
@@ -85,7 +85,7 @@ export default function ManageSkills() {
     setFormData({
       name: skill.name,
       category: skill.category || "Frontend",
-      icon: skill.icon || "", // NEW: Load icon if exists
+      icon: skill.icon || "",
     });
     setEditingId(skill.id);
   };
@@ -172,7 +172,6 @@ export default function ManageSkills() {
               </select>
             </div>
 
-            {/* NEW: Icon Input Field */}
             <div>
               <label className="block text-gray-700 font-semibold mb-2">
                 Icon (Optional)
@@ -189,13 +188,47 @@ export default function ManageSkills() {
                 Leave empty to use default icon mapping. Common icons:
               </p>
               <div className="text-xs text-gray-500 mt-1 space-y-1">
-                <p>• <span className="font-mono bg-gray-200 px-1 rounded">FaReact</span>, <span className="font-mono bg-gray-200 px-1 rounded">FaPython</span>, <span className="font-mono bg-gray-200 px-1 rounded">FaNodeJs</span>, <span className="font-mono bg-gray-200 px-1 rounded">FaDocker</span></p>
-                <p>• <span className="font-mono bg-gray-200 px-1 rounded">SiTailwindcss</span>, <span className="font-mono bg-gray-200 px-1 rounded">SiTypescript</span>, <span className="font-mono bg-gray-200 px-1 rounded">SiMongodb</span>, <span className="font-mono bg-gray-200 px-1 rounded">SiPostgresql</span></p>
+                <p>
+                  •{" "}
+                  <span className="font-mono bg-gray-200 px-1 rounded">
+                    FaReact
+                  </span>
+                  ,{" "}
+                  <span className="font-mono bg-gray-200 px-1 rounded">
+                    FaPython
+                  </span>
+                  ,{" "}
+                  <span className="font-mono bg-gray-200 px-1 rounded">
+                    FaNodeJs
+                  </span>
+                  ,{" "}
+                  <span className="font-mono bg-gray-200 px-1 rounded">
+                    FaDocker
+                  </span>
+                </p>
+                <p>
+                  •{" "}
+                  <span className="font-mono bg-gray-200 px-1 rounded">
+                    SiTailwindcss
+                  </span>
+                  ,{" "}
+                  <span className="font-mono bg-gray-200 px-1 rounded">
+                    SiTypescript
+                  </span>
+                  ,{" "}
+                  <span className="font-mono bg-gray-200 px-1 rounded">
+                    SiMongodb
+                  </span>
+                  ,{" "}
+                  <span className="font-mono bg-gray-200 px-1 rounded">
+                    SiPostgresql
+                  </span>
+                </p>
                 <p className="text-blue-600">
                   Browse all icons at:{" "}
-                  <a 
-                    href="https://react-icons.github.io/react-icons/" 
-                    target="_blank" 
+                  <a
+                    href="https://react-icons.github.io/react-icons/"
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="underline hover:text-blue-700"
                   >

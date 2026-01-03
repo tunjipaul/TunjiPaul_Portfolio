@@ -24,7 +24,6 @@ function ManageHero() {
           setHero(data[0]);
           setHeroId(data[0].id);
         } else {
-         
           const createRes = await fetch(`${API_URL}/api/hero`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },

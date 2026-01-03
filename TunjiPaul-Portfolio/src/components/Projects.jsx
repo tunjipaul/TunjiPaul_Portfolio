@@ -87,9 +87,9 @@ function Projects() {
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          className="font-bold px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 text-sm"
+                          className="font-bold px-4 flex justify-center items-center py-2 bg-black text-white rounded-lg hover:bg-gray-800 text-sm"
                         >
-                          GitHub
+                          <FaGithub className="mr-2" /> GitHub
                         </a>
                       )}
 

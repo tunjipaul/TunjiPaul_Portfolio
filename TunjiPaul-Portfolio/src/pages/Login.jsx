@@ -43,7 +43,6 @@ function Login() {
         throw new Error(data.detail || "Login failed");
       }
 
-      // Save login info
       localStorage.setItem("adminEmail", data.email);
       localStorage.setItem("isLoggedIn", "true");
 

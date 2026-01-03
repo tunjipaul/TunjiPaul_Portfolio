@@ -55,7 +55,7 @@ def get_about(about_id: int, db: Session = Depends(get_db)):
 
 @router.post("", response_model=AboutResponse, status_code=201)
 def create_about(about: AboutCreate, db: Session = Depends(get_db)):
-    # Convert education items to dict format for storage
+    
     education_data = [edu.dict() for edu in about.education] if about.education else []
     
     new_about = About(

@@ -15,7 +15,6 @@ function ManageProjects() {
   const [editGithub, setEditGithub] = useState("");
   const [editDemo, setEditDemo] = useState("");
 
-  
   useEffect(() => {
     fetchProjects();
   }, []);

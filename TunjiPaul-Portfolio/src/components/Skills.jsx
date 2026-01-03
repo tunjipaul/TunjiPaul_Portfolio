@@ -3,9 +3,8 @@ import * as FaIcons from "react-icons/fa";
 import * as SiIcons from "react-icons/si";
 import API_URL from "../config";
 
-// Default icon for skills without a specific icon
 const DefaultIcon = ({ className, style }) => (
-  <div 
+  <div
     className={`w-10 h-10 bg-orange-600 rounded-full flex items-center justify-center text-white font-bold text-xl ${className}`}
     style={style}
   >
@@ -13,7 +12,6 @@ const DefaultIcon = ({ className, style }) => (
   </div>
 );
 
-// Icon mapping - fallback for skills without icons in database
 const iconMap = {
   HTML: FaIcons.FaHtml5,
   CSS: FaIcons.FaCss3Alt,
@@ -27,7 +25,6 @@ const iconMap = {
   GitHub: FaIcons.FaGithub,
 };
 
-// Fallback/placeholder data
 const fallbackSkillsData = [
   {
     category: "Frontend",
@@ -56,20 +53,16 @@ const fallbackSkillsData = [
   },
 ];
 
-// Hybrid icon resolver - checks DB, then iconMap, then default
 const getIcon = (skillName, iconFromDB) => {
-  // Priority 1: Icon from database
   if (iconFromDB) {
     const dbIcon = FaIcons[iconFromDB] || SiIcons[iconFromDB];
     if (dbIcon) return dbIcon;
   }
-  
-  // Priority 2: Icon from hardcoded mapping
+
   if (iconMap[skillName]) {
     return iconMap[skillName];
   }
-  
-  // Priority 3: Default icon
+
   return DefaultIcon;
 };
 
@@ -85,10 +78,9 @@ export default function Skills() {
     try {
       const response = await fetch(`${API_URL}/api/skills`);
       if (!response.ok) throw new Error("Failed to fetch skills");
-      
+
       const data = await response.json();
-      
-      // Group skills by category
+
       const groupedSkills = data.reduce((acc, skill) => {
         const category = skill.category || "Other";
         if (!acc[category]) {
@@ -96,27 +88,24 @@ export default function Skills() {
         }
         acc[category].push({
           name: skill.name,
-          iconName: skill.icon, // Store the icon name from DB
+          iconName: skill.icon,
         });
         return acc;
       }, {});
 
-      // Convert to array format with resolved icons
       const formattedSkills = Object.keys(groupedSkills).map((category) => ({
         category,
-        skills: groupedSkills[category].map(skill => ({
+        skills: groupedSkills[category].map((skill) => ({
           name: skill.name,
-          icon: getIcon(skill.name, skill.iconName), // Use hybrid resolver
+          icon: getIcon(skill.name, skill.iconName),
         })),
       }));
 
-      // Only update if we got data
       if (formattedSkills.length > 0) {
         setSkillsData(formattedSkills);
       }
     } catch (err) {
       console.error("Error fetching skills:", err);
-      // Keep fallback data on error
     } finally {
       setLoading(false);
     }

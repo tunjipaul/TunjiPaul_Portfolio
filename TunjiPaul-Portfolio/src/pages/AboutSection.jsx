@@ -88,7 +88,6 @@ function AboutSection() {
       return;
     }
 
-    // UPDATE existing about section
     fetch(`${API_URL}/api/about/${aboutId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },

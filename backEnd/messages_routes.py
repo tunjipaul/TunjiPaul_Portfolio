@@ -11,11 +11,11 @@ load_dotenv()
 
 router = APIRouter(prefix="/api/messages", tags=["messages"])
 
-# Set Resend API key
+
 resend.api_key = os.getenv("RESEND_API_KEY")
 
 
-# Pydantic Models
+
 class MessageCreate(BaseModel):
     name: str = Field(..., min_length=1, example="John Doe")
     email: EmailStr = Field(..., example="john@example.com")
@@ -166,7 +166,7 @@ def send_reply(reply: ReplyCreate, db: Session = Depends(get_db)):
             )
 
         params = {
-            "from": "Portfolio Contact <onboarding@resend.dev>",  # Use this for testing
+            "from": "Portfolio Contact <onboarding@resend.dev>",  
             "to": [reply.recipient_email],
             "subject": "Re: Your message from portfolio",
             "html": f"""

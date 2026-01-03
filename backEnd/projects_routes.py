@@ -6,7 +6,7 @@ from database import get_db, Project
 
 router = APIRouter(prefix="/api/projects", tags=["projects"])
 
-# Pydantic Models
+
 class ProjectCreate(BaseModel):
     title: str = Field(..., min_length=1, example="Contact Manager App")
     desc: str = Field(..., min_length=1, example="Fullstack app using FastAPI, MySQL, React")

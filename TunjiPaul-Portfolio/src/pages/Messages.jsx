@@ -1,20 +1,24 @@
 import { useEffect, useState } from "react";
 import API_URL from "../config";
-import { 
-  RefreshCw, CheckCircle, Trash2, Eye, 
-  FileText, Mail, User, Calendar, MessageSquare 
+import {
+  RefreshCw,
+  CheckCircle,
+  Trash2,
+  Eye,
+  FileText,
+  Mail,
+  User,
+  Calendar,
+  MessageSquare,
 } from "lucide-react";
 
 function Messages() {
-  // --- Message States ---
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [replyingTo, setReplyingTo] = useState(null);
   const [replyText, setReplyText] = useState("");
   const [sendingReply, setSendingReply] = useState(false);
-
-  // --- Document States ---
   const [resumeFile, setResumeFile] = useState(null);
   const [cvFile, setCvFile] = useState(null);
   const [uploadingResume, setUploadingResume] = useState(false);
@@ -23,7 +27,6 @@ function Messages() {
   const [currentFiles, setCurrentFiles] = useState({ resume: null, cv: null });
   const [deletingType, setDeletingType] = useState(null);
 
-  // --- Initialization ---
   useEffect(() => {
     fetchMessages();
     fetchCurrentFiles();
@@ -34,7 +37,6 @@ function Messages() {
     fetchCurrentFiles();
   };
 
-  // --- Document Logic ---
   const fetchCurrentFiles = async () => {
     try {
       const response = await fetch(`${API_URL}/api/resume/current`);
@@ -67,8 +69,8 @@ function Messages() {
 
       setUploadSuccess(`${type.toUpperCase()} updated successfully!`);
       setTimeout(() => setUploadSuccess(null), 3000);
-      
-      await fetchCurrentFiles(); 
+
+      await fetchCurrentFiles();
       type === "resume" ? setResumeFile(null) : setCvFile(null);
     } catch (err) {
       setError(err.message);
@@ -107,7 +109,6 @@ function Messages() {
     }
   };
 
-  // --- Message Logic ---
   const fetchMessages = async () => {
     try {
       setLoading(true);
@@ -125,23 +126,42 @@ function Messages() {
 
   const toggleRead = async (id, isRead) => {
     try {
+      console.log(`Toggling message ${id} from ${isRead} to ${!isRead}`);
+
       const response = await fetch(`${API_URL}/api/messages/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ is_read: !isRead }),
       });
-      if (response.ok) {
-        setMessages(messages.map((msg) => msg.id === id ? { ...msg, is_read: !isRead } : msg));
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Backend error:", errorData);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    } catch (err) { console.error(err); }
+
+      const updatedMessage = await response.json();
+      console.log("Updated message:", updatedMessage);
+
+      setMessages(
+        messages.map((msg) => (msg.id === id ? updatedMessage : msg))
+      );
+    } catch (err) {
+      console.error("Toggle read error:", err);
+      alert(`Failed to update message: ${err.message}`);
+    }
   };
 
   const deleteMessage = async (id) => {
     if (!window.confirm("Delete this message?")) return;
     try {
-      const response = await fetch(`${API_URL}/api/messages/${id}`, { method: "DELETE" });
+      const response = await fetch(`${API_URL}/api/messages/${id}`, {
+        method: "DELETE",
+      });
       if (response.ok) setMessages(messages.filter((msg) => msg.id !== id));
-    } catch (err) { setError(err.message); }
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const handleReplySubmit = async (e, messageId, recipientEmail) => {
@@ -172,18 +192,21 @@ function Messages() {
   return (
     <div className="min-h-screen p-6 md:p-10 bg-gray-50 font-sans">
       <div className="max-w-6xl mx-auto">
-        
         {/* --- HEADER SECTION --- */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
-            <h1 className="text-4xl font-extrabold text-gray-900">Admin Dashboard</h1>
-            <p className="text-gray-500">Manage your documents and incoming inquiries.</p>
+            <h1 className="text-4xl font-extrabold text-gray-900">
+              Admin Dashboard
+            </h1>
+            <p className="text-gray-500">
+              Manage your documents and incoming inquiries.
+            </p>
           </div>
           <button
             onClick={handleRefreshAll}
             className="flex items-center gap-2 bg-orange-600 text-white px-6 py-3 rounded-xl hover:bg-orange-500 shadow-lg transition-all active:scale-95"
           >
-            <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-5 h-5 ${loading ? "animate-spin" : ""}`} />
             Refresh Data
           </button>
         </div>
@@ -201,14 +224,19 @@ function Messages() {
           )}
 
           <div className="grid md:grid-cols-2 gap-6 mb-8">
-            {['resume', 'cv'].map((type) => (
-              <div key={type} className="flex items-center justify-between p-5 bg-gray-50 rounded-2xl border border-gray-200">
+            {["resume", "cv"].map((type) => (
+              <div
+                key={type}
+                className="flex items-center justify-between p-5 bg-gray-50 rounded-2xl border border-gray-200"
+              >
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600">
                     <FileText className="w-6 h-6" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-gray-400">{type}</p>
+                    <p className="text-xs font-bold uppercase tracking-wider text-gray-400">
+                      {type}
+                    </p>
                     <p className="text-sm font-semibold text-gray-700">
                       {currentFiles[type] ? currentFiles[type] : "Not Uploaded"}
                     </p>
@@ -216,11 +244,15 @@ function Messages() {
                 </div>
                 {currentFiles[type] && (
                   <div className="flex gap-2">
-                    <button onClick={() => handlePreviewFile(type)} className="p-2 text-gray-600 hover:bg-white hover:shadow-sm rounded-lg transition" title="Preview">
+                    <button
+                      onClick={() => handlePreviewFile(type)}
+                      className="p-2 text-gray-600 hover:bg-white hover:shadow-sm rounded-lg transition"
+                      title="Preview"
+                    >
                       <Eye className="w-5 h-5" />
                     </button>
-                    <button 
-                      onClick={() => handleDeleteFile(type)} 
+                    <button
+                      onClick={() => handleDeleteFile(type)}
                       disabled={deletingType === type}
                       className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition disabled:opacity-50"
                     >
@@ -234,13 +266,16 @@ function Messages() {
 
           <div className="grid md:grid-cols-2 gap-8">
             <div className="space-y-3">
-              <label className="text-sm font-bold text-gray-600">Update Resume (PDF)</label>
-              <input 
-                type="file" accept=".pdf" 
+              <label className="text-sm font-bold text-gray-600">
+                Update Resume (PDF)
+              </label>
+              <input
+                type="file"
+                accept=".pdf"
                 onChange={(e) => setResumeFile(e.target.files[0])}
                 className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
               />
-              <button 
+              <button
                 onClick={() => handleUpload("resume", resumeFile)}
                 disabled={!resumeFile || uploadingResume}
                 className="w-full py-2 bg-gray-900 text-white rounded-xl font-medium hover:bg-gray-800 disabled:opacity-30 transition"
@@ -250,13 +285,16 @@ function Messages() {
             </div>
 
             <div className="space-y-3">
-              <label className="text-sm font-bold text-gray-600">Update CV (PDF)</label>
-              <input 
-                type="file" accept=".pdf" 
+              <label className="text-sm font-bold text-gray-600">
+                Update CV (PDF)
+              </label>
+              <input
+                type="file"
+                accept=".pdf"
                 onChange={(e) => setCvFile(e.target.files[0])}
                 className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
               />
-              <button 
+              <button
                 onClick={() => handleUpload("cv", cvFile)}
                 disabled={!cvFile || uploadingCV}
                 className="w-full py-2 bg-gray-900 text-white rounded-xl font-medium hover:bg-gray-800 disabled:opacity-30 transition"
@@ -272,7 +310,11 @@ function Messages() {
           <Mail className="text-orange-600" /> Inbox
         </h2>
 
-        {error && <div className="mb-4 p-4 bg-red-50 text-red-700 rounded-xl border border-red-100">{error}</div>}
+        {error && (
+          <div className="mb-4 p-4 bg-red-50 text-red-700 rounded-xl border border-red-100">
+            {error}
+          </div>
+        )}
 
         <div className="space-y-4">
           {loading ? (
@@ -286,9 +328,13 @@ function Messages() {
             </div>
           ) : (
             messages.map((msg) => (
-              <div 
-                key={msg.id} 
-                className={`group transition-all duration-300 bg-white rounded-2xl p-6 border ${msg.is_read ? 'border-gray-100' : 'border-orange-200 bg-orange-50/30'}`}
+              <div
+                key={msg.id}
+                className={`group transition-all duration-300 bg-white rounded-2xl p-6 border ${
+                  msg.is_read
+                    ? "border-gray-100"
+                    : "border-orange-200 bg-orange-50/30"
+                }`}
               >
                 <div className="flex flex-col md:flex-row justify-between gap-4">
                   <div className="flex-1">
@@ -298,14 +344,25 @@ function Messages() {
                         <User className="w-5 h-5" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-gray-900">{msg.name}</h3>
-                        {!msg.is_read && <span className="bg-orange-600 text-white text-[10px] px-2 py-0.5 rounded-full uppercase font-black">New</span>}
+                        <h3 className="text-lg font-bold text-gray-900">
+                          {msg.name}
+                        </h3>
+                        {!msg.is_read && (
+                          <span className="bg-orange-600 text-white text-[10px] px-2 py-0.5 rounded-full uppercase font-black">
+                            New
+                          </span>
+                        )}
                       </div>
                     </div>
-                    
+
                     <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-4 ml-13 md:ml-13">
-                      <div className="flex items-center gap-1"><Mail className="w-4 h-4" /> {msg.email}</div>
-                      <div className="flex items-center gap-1"><Calendar className="w-4 h-4" /> {new Date(msg.created_at).toLocaleDateString()}</div>
+                      <div className="flex items-center gap-1">
+                        <Mail className="w-4 h-4" /> {msg.email}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />{" "}
+                        {new Date(msg.created_at).toLocaleDateString()}
+                      </div>
                     </div>
 
                     {/* --- MESSAGESQUARE ICON INTEGRATED HERE --- */}
@@ -313,27 +370,35 @@ function Messages() {
                       <div className="flex items-start gap-3">
                         <MessageSquare className="w-5 h-5 text-orange-60 shrink-0" />
                         <div>
-                          <p className="text-xs font-bold text-orange-600 uppercase mb-1 tracking-tight">Subject: {msg.subject}</p>
-                          <p className="text-gray-700 leading-relaxed">{msg.message}</p>
+                          <p className="text-xs font-bold text-orange-600 uppercase mb-1 tracking-tight">
+                            Subject: {msg.subject}
+                          </p>
+                          <p className="text-gray-700 leading-relaxed">
+                            {msg.message}
+                          </p>
                         </div>
                       </div>
                     </div>
                   </div>
 
                   <div className="flex md:flex-col gap-2">
-                    <button 
+                    <button
                       onClick={() => toggleRead(msg.id, msg.is_read)}
-                      className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${msg.is_read ? 'bg-gray-100 text-gray-600' : 'bg-gray-900 text-white'}`}
+                      className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                        msg.is_read
+                          ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                          : "bg-gray-900 text-white hover:text-gray-200"
+                      }`}
                     >
                       {msg.is_read ? "Mark Unread" : "Mark Read"}
                     </button>
-                    <button 
+                    <button
                       onClick={() => setReplyingTo(msg.id)}
                       className="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition-all"
                     >
                       Reply
                     </button>
-                    <button 
+                    <button
                       onClick={() => deleteMessage(msg.id)}
                       className="px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg text-xs font-bold transition-all"
                     >
@@ -344,7 +409,9 @@ function Messages() {
 
                 {replyingTo === msg.id && (
                   <div className="mt-6 pt-6 border-t border-gray-100 animate-slide-down">
-                    <form onSubmit={(e) => handleReplySubmit(e, msg.id, msg.email)}>
+                    <form
+                      onSubmit={(e) => handleReplySubmit(e, msg.id, msg.email)}
+                    >
                       <textarea
                         value={replyText}
                         onChange={(e) => setReplyText(e.target.value)}
@@ -354,10 +421,18 @@ function Messages() {
                         required
                       />
                       <div className="flex gap-3 mt-4">
-                        <button type="submit" disabled={sendingReply} className="px-6 py-2 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 disabled:opacity-50">
+                        <button
+                          type="submit"
+                          disabled={sendingReply}
+                          className="px-6 py-2 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 disabled:opacity-50"
+                        >
                           {sendingReply ? "Sending..." : "Send Message"}
                         </button>
-                        <button type="button" onClick={() => setReplyingTo(null)} className="px-6 py-2 bg-gray-200 text-gray-600 rounded-xl font-bold hover:bg-gray-300">
+                        <button
+                          type="button"
+                          onClick={() => setReplyingTo(null)}
+                          className="px-6 py-2 bg-gray-200 text-gray-600 rounded-xl font-bold hover:bg-gray-300"
+                        >
                           Cancel
                         </button>
                       </div>

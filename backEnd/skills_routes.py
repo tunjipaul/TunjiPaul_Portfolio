@@ -71,7 +71,7 @@ def update_skill(skill_id: int, skill: SkillUpdate, db: Session = Depends(get_db
     if not db_skill:
         raise HTTPException(status_code=404, detail="Skill not found")
 
-    # If updating name, check for duplicates
+    
     if skill.name and skill.name != db_skill.name:
         existing_skill = db.query(Skill).filter(Skill.name == skill.name).first()
         if existing_skill:
