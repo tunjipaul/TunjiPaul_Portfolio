@@ -37,14 +37,14 @@ function Hero() {
   return (
     <section
       id="hero"
-      className="min-h-screen pt-16 flex flex-col md:flex-row items-center justify-center bg-linear-to-r from-orange-100 to-orange-50 px-6 md:px-20"
+      className="min-h-screen pt-20 pb-12 md:pb-20 flex flex-col md:flex-row items-center justify-center bg-gradient-to-r from-orange-100 to-orange-50 px-6 md:px-20"
     >
       <div className="md:w-1/2 flex justify-center order-1 md:order-2 mb-10 md:mb-0">
         <div className="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96">
           <img
             src={hero.image_url}
             alt={hero.title}
-            className="w-full h-full rounded-full shadow-lg"
+            className="w-full h-full rounded-full shadow-lg object-cover"
           />
 
           <div
