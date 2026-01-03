@@ -44,7 +44,7 @@ function Hero() {
           <img
             src={hero.image_url}
             alt={hero.title}
-            className="w-full h-full rounded-full shadow-lg object-cover"
+            className="w-full h-full rounded-full shadow-lg "
           />
 
           <div
