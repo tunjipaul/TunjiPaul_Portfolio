@@ -51,8 +51,7 @@ class About(Base):
     title = Column(String(255))
     content = Column(Text)
     image_url = Column(String(255))
-    skills = Column(JSON)
-    education = Column(String(255))
+    education = Column(JSON)  # Changed from String(255) to JSON
 
 
 class Project(Base):
@@ -148,8 +147,7 @@ def create_tables():
             title VARCHAR(255),
             content TEXT,
             image_url VARCHAR(500),
-            skills JSON,
-            education VARCHAR(500)
+            education JSON
         );
         """
         )

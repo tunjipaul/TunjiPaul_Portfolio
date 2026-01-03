@@ -7,12 +7,19 @@ from database import get_db, About
 router = APIRouter(prefix="/api/about", tags=["About"])
 
 
+class EducationItem(BaseModel):
+    institution: str
+    degree: str
+    field: Optional[str] = None
+    startYear: Optional[str] = None
+    endYear: Optional[str] = None
+
+
 class AboutBase(BaseModel):
     title: Optional[str] = None
     content: Optional[str] = None
     image_url: Optional[str] = None
-    skills: Optional[List[str]] = []
-    education: Optional[str] = None
+    education: Optional[List[EducationItem]] = []
 
 
 class AboutCreate(AboutBase):
@@ -23,8 +30,7 @@ class AboutUpdate(BaseModel):
     title: Optional[str] = None
     content: Optional[str] = None
     image_url: Optional[str] = None
-    skills: Optional[List[str]] = None
-    education: Optional[str] = None
+    education: Optional[List[EducationItem]] = None
 
 
 class AboutResponse(AboutBase):
@@ -49,12 +55,14 @@ def get_about(about_id: int, db: Session = Depends(get_db)):
 
 @router.post("", response_model=AboutResponse, status_code=201)
 def create_about(about: AboutCreate, db: Session = Depends(get_db)):
+    # Convert education items to dict format for storage
+    education_data = [edu.dict() for edu in about.education] if about.education else []
+    
     new_about = About(
         title=about.title,
         content=about.content,
         image_url=about.image_url,
-        skills=about.skills,
-        education=about.education,
+        education=education_data,
     )
     db.add(new_about)
     db.commit()
@@ -69,6 +77,11 @@ def update_about(about_id: int, about: AboutUpdate, db: Session = Depends(get_db
         raise HTTPException(status_code=404, detail="About section not found")
 
     update_data = about.dict(exclude_unset=True)
+    
+    # Convert education items to dict format if present
+    if "education" in update_data and update_data["education"] is not None:
+        update_data["education"] = [edu.dict() for edu in about.education]
+    
     for key, value in update_data.items():
         setattr(db_about, key, value)
 

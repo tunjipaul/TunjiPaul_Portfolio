@@ -4,21 +4,19 @@ import API_URL from '../config';
 function About() {
   const [aboutData, setAboutData] = useState({
     content: "",
-    skills: [],
-    education: "",
+    education: [],
     image_url: "",
   });
 
   useEffect(() => {
-    fetch(`${API_URL}/api/about`) // match your FastAPI route
+    fetch(`${API_URL}/api/about`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
-          const about = data[0]; // take the first About section
+          const about = data[0];
           setAboutData({
             content: about.content || "",
-            skills: about.skills || [],
-            education: about.education || "",
+            education: about.education || [],
             image_url: about.image_url || "",
           });
         }
@@ -45,21 +43,42 @@ function About() {
       <div className="md:w-1/2">
         <h2 className="text-4xl font-bold text-orange-600 mb-4">About Me</h2>
 
-        <p className="text-gray-100 text-lg md:text-xl mb-4">
+        <p className="text-gray-100 text-lg md:text-xl mb-6">
           {aboutData.content ||
             "I'm an AI Developer with a strong foundation in building intelligent, scalable systems and modern frontend solutions. My work blends engineering, design, and problem-solving across multiple layers of technology."}
         </p>
 
-       
+        <div>
+          <p className="text-orange-600 text-lg md:text-xl font-semibold mb-3">
+            Education
+          </p>
 
-        <p className="text-orange-600 text-lg md:text-xl font-semibold mb-3">
-          Education
-        </p>
-
-        <p className="text-gray-100 text-lg md:text-xl">
-          {aboutData.education || "B.Eng, Mechatronics Engineering "}
-          <span className="text-orange-300">(GMNSE)</span>
-        </p>
+          {aboutData.education.length > 0 ? (
+            <div className="space-y-4">
+              {aboutData.education.map((edu, index) => (
+                <div key={index} className="text-gray-100">
+                  <p className="text-lg md:text-xl font-semibold">
+                    {edu.degree}
+                    {edu.field && (
+                      <span className="text-orange-300"> in {edu.field}</span>
+                    )}
+                  </p>
+                  <p className="text-md md:text-lg text-gray-300">
+                    {edu.institution}
+                  </p>
+                  <p className="text-sm md:text-md text-gray-400">
+                    {edu.startYear} - {edu.endYear || "Present"}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-100 text-lg md:text-xl">
+              B.Eng, Mechatronics Engineering{" "}
+              <span className="text-orange-300">(GMNSE)</span>
+            </p>
+          )}
+        </div>
       </div>
     </section>
   );
