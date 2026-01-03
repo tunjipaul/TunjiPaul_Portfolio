@@ -27,20 +27,22 @@ function About() {
   return (
     <section
       id="about"
-      className="min-h-screen flex flex-col md:flex-row items-center bg-black px-6 md:px-20 py-20"
+      className="min-h-screen flex flex-col md:flex-row md:items-start items-center bg-black px-6 md:px-20 py-20 gap-8 md:gap-12"
     >
-      <div className="md:w-1/2 flex justify-center mb-10 md:mb-0">
+      {/* Image Container */}
+      <div className="w-full md:w-1/2 flex justify-center md:justify-start">
         <img
           src={
             aboutData.image_url ||
             "https://res.cloudinary.com/dbadkovof/image/upload/v1763236198/Gemini_Generated_Image_71u47471u47471u4_zqmm2d.png"
           }
           alt="Profile"
-          className="w-64 md:w-80 lg:w-96 rounded-lg shadow-lg"
+          className="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-lg shadow-lg object-cover"
         />
       </div>
 
-      <div className="md:w-1/2">
+      {/* Text Container */}
+      <div className="w-full md:w-1/2">
         <h2 className="text-4xl font-bold text-orange-600 mb-4">About Me</h2>
 
         <p className="text-gray-100 text-lg md:text-xl mb-6">

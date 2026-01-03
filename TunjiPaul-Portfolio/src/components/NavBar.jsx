@@ -13,7 +13,7 @@ function NavBar() {
   };
 
   return (
-    <nav className="bg-orange-50 shadow-md fixed w-full z-10">
+    <nav className="bg-orange-50 shadow-md fixed w-full z-50">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <div className="shrink-0">

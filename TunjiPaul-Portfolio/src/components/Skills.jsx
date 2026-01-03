@@ -112,7 +112,7 @@ export default function Skills() {
   };
 
   return (
-    <section id="skills" className="py-20 bg-orange-50 px-6 md:px-20">
+    <section id="skills" className="pt-30 pb-20 bg-orange-50 px-6 md:px-20">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-4xl font-bold text-center text-orange-600 mb-16">
           Skills & Technologies

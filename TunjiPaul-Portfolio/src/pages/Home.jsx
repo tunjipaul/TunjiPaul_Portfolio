@@ -6,7 +6,6 @@ import Projects from "../components/Projects";
 import Contacts from "../components/Contacts";
 import Footer from "../components/Footer";
 
-
 function Home() {
   return (
     <div className="w-full overflow-x-hidden">
