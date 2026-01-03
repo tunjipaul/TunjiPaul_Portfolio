@@ -298,7 +298,7 @@ This project is licensed under the MIT License.
 **Tunji Paul**
 
 - Portfolio: [https://tunji-paul-portfolio.vercel.app](https://tunji-paul-portfolio.vercel.app)
-- GitHub: [@your-github-username](https://github.com/tunjipaul)
+- GitHub: [@tunjipaul](https://github.com/tunjipaul)
 
 ## 🙏 Acknowledgments
 
