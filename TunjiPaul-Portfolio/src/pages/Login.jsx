@@ -12,9 +12,9 @@ function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if already logged in
-    const savedEmail = localStorage.getItem("adminEmail");
-    if (savedEmail) {
+    // ✅ Check if already logged in
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    if (isLoggedIn === "true") {
       navigate("/dashboard");
     }
   }, [navigate]);
