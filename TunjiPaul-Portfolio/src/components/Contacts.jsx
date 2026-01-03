@@ -2,6 +2,18 @@ import { useState } from "react";
 import API_URL from "../config";
 import { FaTwitter, FaInstagram, FaLinkedin, FaGithub } from "react-icons/fa";
 import { SiMedium } from "react-icons/si";
+import { 
+  Mail, 
+  MapPin, 
+  Clock, 
+  Download, 
+  ChevronDown, 
+  FileText, 
+  File, 
+  Check, 
+  X, 
+  Loader2 
+} from "lucide-react";
 
 function Contacts() {
   const [form, setForm] = useState({
@@ -95,19 +107,7 @@ function Contacts() {
 
               <div className="space-y-4 mb-8">
                 <div className="flex items-start gap-3">
-                  <svg
-                    className="w-6 h-6 mt-1 shrink-0"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                    />
-                  </svg>
+                  <Mail className="w-6 h-6 mt-1 shrink-0" />
                   <div>
                     <p className="font-semibold">Email</p>
                     <p className="text-orange-100">ogorpaul877@gmail.com</p>
@@ -115,25 +115,7 @@ function Contacts() {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <svg
-                    className="w-6 h-6 mt-1 shrink-0"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
+                  <MapPin className="w-6 h-6 mt-1 shrink-0" />
                   <div>
                     <p className="font-semibold">Location</p>
                     <p className="text-orange-100">Lagos, Nigeria</p>
@@ -141,19 +123,7 @@ function Contacts() {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <svg
-                    className="w-6 h-6 mt-1 shrink-0"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
+                  <Clock className="w-6 h-6 mt-1 shrink-0" />
                   <div>
                     <p className="font-semibold">Contact</p>
                     <p className="text-orange-100">+2349019978821</p>
@@ -167,35 +137,13 @@ function Contacts() {
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                   className="w-full bg-white text-orange-600 px-6 py-3 rounded-lg font-semibold hover:bg-orange-50 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
-                  Download My Documents
-                  <svg
+                  <Download className="w-5 h-5" />
+                  Hire me!
+                  <ChevronDown
                     className={`w-4 h-4 transition-transform duration-300 ${
                       dropdownOpen ? "rotate-180" : ""
                     }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
+                  />
                 </button>
 
                 {/* Dropdown Menu */}
@@ -206,19 +154,7 @@ function Contacts() {
                       className="w-full px-6 py-4 text-left hover:bg-orange-50 transition-colors duration-200 flex items-center gap-3 group"
                     >
                       <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center group-hover:bg-orange-200 transition-colors">
-                        <svg
-                          className="w-5 h-5 text-orange-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                          />
-                        </svg>
+                        <FileText className="w-5 h-5 text-orange-600" />
                       </div>
                       <div>
                         <p className="font-semibold text-gray-800">Resume</p>
@@ -233,19 +169,7 @@ function Contacts() {
                       className="w-full px-6 py-4 text-left hover:bg-orange-50 transition-colors duration-200 flex items-center gap-3 group border-t"
                     >
                       <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center group-hover:bg-orange-200 transition-colors">
-                        <svg
-                          className="w-5 h-5 text-orange-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-                          />
-                        </svg>
+                        <File className="w-5 h-5 text-orange-600" />
                       </div>
                       <div>
                         <p className="font-semibold text-gray-800">
@@ -261,7 +185,7 @@ function Contacts() {
               </div>
             </div>
 
-            {/* Social Links (Optional) */}
+            {/* Social Links */}
             <div className="bg-orange-50 p-6 rounded-xl">
               <h4 className="font-semibold text-gray-800 mb-3">
                 Connect on Social Media
@@ -323,38 +247,14 @@ function Contacts() {
 
               {success && (
                 <div className="p-4 bg-green-100 text-green-800 rounded-lg flex items-center gap-2">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
+                  <Check className="w-5 h-5" />
                   Message sent successfully! I'll get back to you soon.
                 </div>
               )}
 
               {error && (
                 <div className="p-4 bg-red-100 text-red-800 rounded-lg flex items-center gap-2">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
+                  <X className="w-5 h-5" />
                   {error}
                 </div>
               )}
@@ -426,25 +326,7 @@ function Contacts() {
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
-                    <svg
-                      className="animate-spin h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
+                    <Loader2 className="w-5 h-5 animate-spin" />
                     Sending...
                   </span>
                 ) : (
