@@ -45,7 +45,7 @@ const fallbackSkillsData = [
     ],
   },
   {
-    category: "Tools & Version Control",
+    category: "Tools, Version Control & AI",
     skills: [
       { name: "Git", icon: FaIcons.FaGit },
       { name: "GitHub", icon: FaIcons.FaGithub },
