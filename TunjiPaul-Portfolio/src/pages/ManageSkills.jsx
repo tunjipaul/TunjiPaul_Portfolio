@@ -13,7 +13,7 @@ export default function ManageSkills() {
   });
   const [editingId, setEditingId] = useState(null);
 
-  const categories = ["Frontend", "Backend", "Tools & Version Control"];
+  const categories = ["Frontend", "Backend", "Tools, Version Control & AI"];
 
   useEffect(() => {
     fetchSkills();
