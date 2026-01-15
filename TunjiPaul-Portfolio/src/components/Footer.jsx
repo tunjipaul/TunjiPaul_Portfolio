@@ -17,7 +17,7 @@ function Footer() {
     {
       name: "LinkedIn",
       icon: <FaLinkedin />,
-      url: "https://www.linkedin.com/in/paul-ogor-9103601b1/",
+      url: "https://www.linkedin.com/in/paul-ogor-gmnse-9103601b1",
     },
     {
       name: "Twitter / X",
