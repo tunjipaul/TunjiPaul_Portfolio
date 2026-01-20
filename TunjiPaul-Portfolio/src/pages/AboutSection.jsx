@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import API_URL from "../config";
+import apiRequest from "../utils/api";
 
 function AboutSection() {
   const [aboutId, setAboutId] = useState(null);
@@ -15,8 +16,10 @@ function AboutSection() {
   });
 
   useEffect(() => {
-    fetch(`${API_URL}/api/about`)
-      .then((res) => res.json())
+    // GET might be public, but using apiRequest gives us consistent error handling and type safety if needed.
+    // However, if it's public, apiRequest will still work (headers are optional/ignored by backend if not needed).
+    // Let's use apiRequest for consistency.
+    apiRequest("/api/about")
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
           const about = data[0];
@@ -49,59 +52,32 @@ function AboutSection() {
     setEducation(education.filter((_, i) => i !== index));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const payload = {
       content: aboutText,
       education: education,
       image_url: imageUrl,
     };
 
-    console.log("Sending payload:", JSON.stringify(payload, null, 2));
-
-    if (!aboutId) {
-      fetch(`${API_URL}/api/about`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      })
-        .then((res) => {
-          if (!res.ok) {
-            return res.json().then((err) => {
-              console.error("Backend error:", err);
-              throw new Error(
-                `HTTP error! status: ${res.status}, details: ${JSON.stringify(
-                  err
-                )}`
-              );
-            });
-          }
-          return res.json();
-        })
-        .then((newAbout) => {
-          setAboutId(newAbout.id);
-          alert("About section created!");
-        })
-        .catch((err) => {
-          console.error(err);
-          alert(`Error creating about: ${err.message}`);
+    try {
+      if (!aboutId) {
+        const newAbout = await apiRequest("/api/about", {
+          method: "POST",
+          body: JSON.stringify(payload),
         });
-      return;
+        setAboutId(newAbout.id);
+        alert("About section created!");
+      } else {
+        await apiRequest(`/api/about/${aboutId}`, {
+          method: "PUT",
+          body: JSON.stringify(payload),
+        });
+        alert("About section updated!");
+      }
+    } catch (err) {
+      console.error(err);
+      alert(`Error saving about section: ${err.message}`);
     }
-
-    fetch(`${API_URL}/api/about/${aboutId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        return res.json();
-      })
-      .then(() => alert("About section updated!"))
-      .catch((err) => {
-        console.error(err);
-        alert(`Error updating about: ${err.message}`);
-      });
   };
 
   return (

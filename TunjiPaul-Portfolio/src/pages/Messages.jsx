@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import API_URL from "../config";
+import apiRequest from "../utils/api";
 import {
   RefreshCw,
   CheckCircle,
@@ -32,6 +33,8 @@ function Messages() {
     fetchCurrentFiles();
   }, []);
 
+  /* --- REFACTOR START: Using apiRequest for automated token handling --- */
+  
   const handleRefreshAll = () => {
     fetchMessages();
     fetchCurrentFiles();
@@ -39,11 +42,8 @@ function Messages() {
 
   const fetchCurrentFiles = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/resume/current`);
-      if (response.ok) {
-        const data = await response.json();
-        setCurrentFiles(data);
-      }
+      const data = await apiRequest("/api/resume/current");
+      if (data) setCurrentFiles(data);
     } catch (err) {
       console.error("Error fetching files:", err);
     }
@@ -60,12 +60,9 @@ function Messages() {
     type === "resume" ? setUploadingResume(true) : setUploadingCV(true);
 
     try {
-      const response = await fetch(`${API_URL}/api/resume/upload`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) throw new Error("Failed to upload file");
+      // Use apiUpload which handles tokens and FormData correctly
+      const { apiUpload } = await import("../utils/api");
+      await apiUpload("/api/resume/upload", formData);
 
       setUploadSuccess(`${type.toUpperCase()} updated successfully!`);
       setTimeout(() => setUploadSuccess(null), 3000);
@@ -83,10 +80,8 @@ function Messages() {
     if (!window.confirm(`Delete the current ${type.toUpperCase()}?`)) return;
     setDeletingType(type);
     try {
-      const response = await fetch(`${API_URL}/api/resume/delete/${type}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) throw new Error("Failed to delete file");
+      await apiRequest(`/api/resume/delete/${type}`, { method: "DELETE" });
+      
       await fetchCurrentFiles();
       setUploadSuccess(`${type.toUpperCase()} removed.`);
       setTimeout(() => setUploadSuccess(null), 3000);
@@ -99,6 +94,8 @@ function Messages() {
 
   const handlePreviewFile = async (type) => {
     try {
+      // Direct fetch is okay here since this is a public endpoint according to resume_routes.py
+      // But let's check: @router.get("/api/resume/download/{type}") is PUBLIC.
       const response = await fetch(`${API_URL}/api/resume/download/${type}`);
       if (!response.ok) throw new Error("File not available");
       const blob = await response.blob();
@@ -112,9 +109,7 @@ function Messages() {
   const fetchMessages = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/api/messages`);
-      if (!response.ok) throw new Error("Failed to fetch messages");
-      const data = await response.json();
+      const data = await apiRequest("/api/messages");
       setMessages(data);
       setError(null);
     } catch (err) {
@@ -126,19 +121,10 @@ function Messages() {
 
   const toggleRead = async (id, isRead) => {
     try {
-      const response = await fetch(`${API_URL}/api/messages/${id}`, {
+      const updatedMessage = await apiRequest(`/api/messages/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ is_read: !isRead }),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Backend error:", errorData);
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const updatedMessage = await response.json();
 
       setMessages(
         messages.map((msg) => (msg.id === id ? updatedMessage : msg))
@@ -152,10 +138,8 @@ function Messages() {
   const deleteMessage = async (id) => {
     if (!window.confirm("Delete this message?")) return;
     try {
-      const response = await fetch(`${API_URL}/api/messages/${id}`, {
-        method: "DELETE",
-      });
-      if (response.ok) setMessages(messages.filter((msg) => msg.id !== id));
+      await apiRequest(`/api/messages/${id}`, { method: "DELETE" });
+      setMessages(messages.filter((msg) => msg.id !== id));
     } catch (err) {
       setError(err.message);
     }
@@ -166,16 +150,15 @@ function Messages() {
     if (!replyText.trim()) return;
     setSendingReply(true);
     try {
-      const response = await fetch(`${API_URL}/api/messages/reply`, {
+      await apiRequest("/api/messages/reply", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message_id: messageId,
           recipient_email: recipientEmail,
           reply_text: replyText,
         }),
       });
-      if (!response.ok) throw new Error("Failed to send reply");
+      
       alert("Reply sent!");
       setReplyingTo(null);
       setReplyText("");
