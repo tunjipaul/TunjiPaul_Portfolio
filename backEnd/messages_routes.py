@@ -16,7 +16,6 @@ router = APIRouter(prefix="/api/messages", tags=["messages"])
 resend.api_key = os.getenv("RESEND_API_KEY")
 
 
-
 class MessageCreate(BaseModel):
     name: str = Field(..., min_length=1, example="John Doe")
     email: EmailStr = Field(..., example="john@example.com")
@@ -50,11 +49,15 @@ def send_email_notification(name: str, email: str, subject: str, message_content
         receiver_email = os.getenv("ADMIN_EMAIL")
 
         if not receiver_email:
-            print("Warning: ADMIN_EMAIL not configured. Message saved but email not sent.")
+            print(
+                "Warning: ADMIN_EMAIL not configured. Message saved but email not sent."
+            )
             return
 
         if not resend.api_key:
-            print("Warning: RESEND_API_KEY not configured. Message saved but email not sent.")
+            print(
+                "Warning: RESEND_API_KEY not configured. Message saved but email not sent."
+            )
             return
 
         params = {
@@ -83,20 +86,19 @@ def send_email_notification(name: str, email: str, subject: str, message_content
                     </p>
                 </div>
             """,
-            "reply_to": email  # Allows you to hit "reply" in your email client
+            "reply_to": email,  # Allows you to hit "reply" in your email client
         }
 
         response = resend.Emails.send(params)
         print(f"✓ Email sent successfully to {receiver_email} (ID: {response['id']})")
-        
+
     except Exception as e:
         print(f"Warning: Could not send email: {e}")
 
 
 @router.get("", response_model=list[MessageResponse])
 def get_all_messages(
-    db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user)
+    db: Session = Depends(get_db), current_user: str = Depends(get_current_user)
 ):
     """Get all messages (admin panel)"""
     messages = db.query(Message).order_by(Message.created_at.desc()).all()
@@ -107,7 +109,7 @@ def get_all_messages(
 def get_message(
     message_id: int,
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user)
+    current_user: str = Depends(get_current_user),
 ):
     """Get a specific message by ID"""
     message = db.query(Message).filter(Message.id == message_id).first()
@@ -137,8 +139,8 @@ def update_message(
     message_id: int,
     msg_update: MessageUpdate,
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user)
-)::
+    current_user: str = Depends(get_current_user),
+):
     """Mark message as read/unread"""
     db_message = db.query(Message).filter(Message.id == message_id).first()
     if not db_message:
@@ -154,7 +156,7 @@ def update_message(
 def delete_message(
     message_id: int,
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user)
+    current_user: str = Depends(get_current_user),
 ):
     """Delete a message"""
     db_message = db.query(Message).filter(Message.id == message_id).first()
@@ -175,17 +177,15 @@ class ReplyCreate(BaseModel):
 def send_reply(
     reply: ReplyCreate,
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user)
+    current_user: str = Depends(get_current_user),
 ):
     """Send a reply to a message using Resend"""
     try:
         if not resend.api_key:
-            raise HTTPException(
-                status_code=500, detail="RESEND_API_KEY not configured"
-            )
+            raise HTTPException(status_code=500, detail="RESEND_API_KEY not configured")
 
         params = {
-            "from": "Portfolio Contact <onboarding@resend.dev>",  
+            "from": "Portfolio Contact <onboarding@resend.dev>",
             "to": [reply.recipient_email],
             "subject": "Re: Your message from portfolio",
             "html": f"""
@@ -198,15 +198,19 @@ def send_reply(
                         This is a reply to your message sent through the portfolio contact form.
                     </p>
                 </div>
-            """
+            """,
         }
 
         response = resend.Emails.send(params)
-        print(f"✓ Reply sent successfully to {reply.recipient_email} (ID: {response['id']})")
-        return {"message": "Reply sent successfully", "email_id": response['id']}
+        print(
+            f"✓ Reply sent successfully to {reply.recipient_email} (ID: {response['id']})"
+        )
+        return {"message": "Reply sent successfully", "email_id": response["id"]}
 
     except Exception as e:
         # Log detailed error server-side only
         print(f"✗ Error sending reply: {e}")
         # Return generic error to client
-        raise HTTPException(status_code=500, detail="Failed to send reply. Please try again.")
+        raise HTTPException(
+            status_code=500, detail="Failed to send reply. Please try again."
+        )
