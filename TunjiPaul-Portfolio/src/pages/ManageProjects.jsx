@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import API_URL from "../config";
+import apiRequest from "../utils/api";
 function ManageProjects() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,9 +23,7 @@ function ManageProjects() {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/api/projects`);
-      if (!response.ok) throw new Error("Failed to fetch projects");
-      const data = await response.json();
+      const data = await fetch(`${API_URL}/api/projects`).then(res => res.json());
       setProjects(data);
       setError(null);
     } catch (err) {
@@ -42,9 +41,8 @@ function ManageProjects() {
     }
 
     try {
-      const response = await fetch(`${API_URL}/api/projects`, {
+      await apiRequest('/api/projects', {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: newTitle,
           desc: newDesc,
@@ -52,9 +50,6 @@ function ManageProjects() {
           demo: newDemo || "",
         }),
       });
-
-      if (!response.ok) throw new Error("Failed to create project");
-      await response.json();
       setNewTitle("");
       setNewDesc("");
       setNewGithub("");
@@ -72,11 +67,9 @@ function ManageProjects() {
       return;
 
     try {
-      const response = await fetch(`${API_URL}/api/projects/${id}`, {
+      await apiRequest(`/api/projects/${id}`, {
         method: "DELETE",
       });
-
-      if (!response.ok) throw new Error("Failed to delete project");
       setProjects(projects.filter((p) => p.id !== id));
       setError(null);
     } catch (err) {
@@ -100,9 +93,8 @@ function ManageProjects() {
     }
 
     try {
-      const response = await fetch(`${API_URL}/api/projects/${id}`, {
+      const updatedProject = await apiRequest(`/api/projects/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: editTitle,
           desc: editDesc,
@@ -110,9 +102,6 @@ function ManageProjects() {
           demo: editDemo || "",
         }),
       });
-
-      if (!response.ok) throw new Error("Failed to update project");
-      const updatedProject = await response.json();
       setProjects(projects.map((p) => (p.id === id ? updatedProject : p)));
       setEditingId(null);
       setError(null);

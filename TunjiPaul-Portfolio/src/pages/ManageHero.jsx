@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import API_URL from "../config";
+import apiRequest from "../utils/api";
 
 function ManageHero() {
   const [hero, setHero] = useState(null);
@@ -17,19 +18,16 @@ function ManageHero() {
   useEffect(() => {
     async function fetchOrCreateHero() {
       try {
-        const res = await fetch(`${API_URL}/api/hero`);
-        const data = await res.json();
+        const data = await fetch(`${API_URL}/api/hero`).then(res => res.json());
 
         if (data.length > 0) {
           setHero(data[0]);
           setHeroId(data[0].id);
         } else {
-          const createRes = await fetch(`${API_URL}/api/hero`, {
+          const newHero = await apiRequest('/api/hero', {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(defaultHero),
           });
-          const newHero = await createRes.json();
           setHero(newHero);
           setHeroId(newHero.id);
         }
@@ -53,13 +51,10 @@ function ManageHero() {
       return;
     }
     try {
-      const res = await fetch(`${API_URL}/api/hero/${heroId}`, {
+      const updatedHero = await apiRequest(`/api/hero/${heroId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(hero),
       });
-      if (!res.ok) throw new Error("Failed to update hero");
-      const updatedHero = await res.json();
       setHero(updatedHero);
       alert("Hero section updated!");
     } catch (err) {

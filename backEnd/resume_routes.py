@@ -96,7 +96,12 @@ async def upload_document(
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to upload file: {str(e)}")
+        # Log detailed error server-side only
+        print(f"File upload error: {str(e)}")
+        # Return generic error to client
+        raise HTTPException(
+            status_code=500, detail="Failed to upload file. Please try again."
+        )
 
 
 @router.get("/api/resume/download/{type}")
@@ -136,7 +141,12 @@ async def delete_document(type: str, current_user: str = Depends(get_current_use
         os.remove(file_path)
         return {"message": f"{type.upper()} deleted successfully", "type": type}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to delete file: {str(e)}")
+        # Log detailed error server-side only
+        print(f"File deletion error: {str(e)}")
+        # Return generic error to client
+        raise HTTPException(
+            status_code=500, detail="Failed to delete file. Please try again."
+        )
 
 
 @router.get("/api/resume/current")

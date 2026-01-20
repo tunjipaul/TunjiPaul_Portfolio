@@ -206,5 +206,7 @@ def send_reply(
         return {"message": "Reply sent successfully", "email_id": response['id']}
 
     except Exception as e:
+        # Log detailed error server-side only
         print(f"✗ Error sending reply: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to send reply: {str(e)}")
+        # Return generic error to client
+        raise HTTPException(status_code=500, detail="Failed to send reply. Please try again.")
