@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
 import uvicorn
+import bcrypt
 from database import get_db, Base, engine, create_tables
 from hero_routes import router as hero_router
 from about_routes import router as about_router
@@ -71,8 +72,13 @@ def login(user: UserLogin, db=Depends(get_db)):
     query = text("SELECT * FROM users WHERE email = :email")
     result = db.execute(query, {"email": user.email}).fetchone()
 
-    if result:
-        if user.password == result.password:
+    if not result:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Check if password is already hashed (bcrypt hashes start with $2b$)
+    if result.password.startswith('$2b$'):
+        # Password is hashed - verify using bcrypt
+        if bcrypt.checkpw(user.password.encode('utf-8'), result.password.encode('utf-8')):
             return {
                 "message": "Login successful",
                 "email": result.email,
@@ -80,7 +86,25 @@ def login(user: UserLogin, db=Depends(get_db)):
         else:
             raise HTTPException(status_code=401, detail="Invalid password")
     else:
-        raise HTTPException(status_code=404, detail="User not found")
+        # Password is plain text - migrate it on successful login
+        if user.password == result.password:
+            # Login successful - now hash and update the password
+            hashed_password = bcrypt.hashpw(
+                user.password.encode('utf-8'), 
+                bcrypt.gensalt()
+            ).decode('utf-8')
+            
+            update_query = text("UPDATE users SET password = :password WHERE email = :email")
+            db.execute(update_query, {"password": hashed_password, "email": user.email})
+            db.commit()
+            
+            print(f"✅ Password migrated to bcrypt hash for {user.email}")
+            return {
+                "message": "Login successful",
+                "email": result.email,
+            }
+        else:
+            raise HTTPException(status_code=401, detail="Invalid password")
 
 
 if __name__ == "__main__":

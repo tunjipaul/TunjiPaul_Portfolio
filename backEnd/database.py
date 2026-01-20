@@ -13,6 +13,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from dotenv import load_dotenv
 from datetime import datetime, timezone
 import os
+import bcrypt
 
 
 load_dotenv()
@@ -122,8 +123,13 @@ def create_tables():
         admin_email = os.getenv("ADMIN_LOGIN_EMAIL", "admin@example.com")
         admin_password = os.getenv("ADMIN_LOGIN_PASSWORD", "password123")
 
+        # Hash the password before storing
+        hashed_password = bcrypt.hashpw(
+            admin_password.encode("utf-8"), bcrypt.gensalt()
+        ).decode("utf-8")
+
         db.execute(
-            insert_admin_query, {"email": admin_email, "password": admin_password}
+            insert_admin_query, {"email": admin_email, "password": hashed_password}
         )
 
         create_hero_query = text(
