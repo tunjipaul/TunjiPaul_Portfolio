@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Trash2, Plus, Edit2 } from "lucide-react";
 import API_URL from "../config";
+import apiRequest from "../utils/api";
 
 export default function ManageSkills() {
   const [skills, setSkills] = useState([]);
@@ -57,19 +58,12 @@ export default function ManageSkills() {
         ? `${API_URL}/api/skills/${editingId}`
         : `${API_URL}/api/skills`;
 
-      const response = await fetch(url, {
+      const response = await apiRequest(url.replace(API_URL, ''), {
         method,
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Backend error:", errorData);
-        throw new Error(errorData.detail || "Failed to save skill");
-      }
+      // apiRequest already handles errors and returns parsed JSON
 
       setFormData({ name: "", category: "Frontend", icon: "" });
       setEditingId(null);
@@ -94,11 +88,11 @@ export default function ManageSkills() {
     if (!window.confirm("Are you sure you want to delete this skill?")) return;
 
     try {
-      const response = await fetch(`${API_URL}/api/skills/${id}`, {
+      await apiRequest(`/api/skills/${id}`, {
         method: "DELETE",
       });
 
-      if (!response.ok) throw new Error("Failed to delete skill");
+      // apiRequest already handles errors
       fetchSkills();
       setError(null);
     } catch (err) {

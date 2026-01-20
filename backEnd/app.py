@@ -6,6 +6,8 @@ from fastapi.responses import JSONResponse
 from sqlalchemy import text
 import uvicorn
 import bcrypt
+import os
+from auth_utils import create_access_token, ACCESS_TOKEN_EXPIRE_HOURS
 from database import get_db, Base, engine, create_tables
 from hero_routes import router as hero_router
 from about_routes import router as about_router
@@ -16,7 +18,7 @@ from resume_routes import router as resume_router
 
 
 try:
-    create_tables() 
+    create_tables()
     print("Tables created/verified successfully")
 except Exception as e:
     print(f"Warning: Could not create tables: {e}")
@@ -24,12 +26,11 @@ except Exception as e:
 
 app = FastAPI(title="My Personal Portfolio Backend", version="1.0.0")
 
-origins = [
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "http://localhost:5174",
-    "https://tunji-paul-portfolio.vercel.app",
-]
+allowed_origins = os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://localhost:5173,http://localhost:3000,http://localhost:5174,https://tunji-paul-portfolio.vercel.app",
+)
+origins = [origin.strip() for origin in allowed_origins.split(",")]
 
 app.add_middleware(
     CORSMiddleware,
@@ -51,7 +52,6 @@ app.include_router(project_router)
 app.include_router(message_router)
 app.include_router(skills_router)
 app.include_router(resume_router)
-
 
 
 @app.exception_handler(RequestValidationError)
@@ -76,12 +76,18 @@ def login(user: UserLogin, db=Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
 
     # Check if password is already hashed (bcrypt hashes start with $2b$)
-    if result.password.startswith('$2b$'):
+    if result.password.startswith("$2b$"):
         # Password is hashed - verify using bcrypt
-        if bcrypt.checkpw(user.password.encode('utf-8'), result.password.encode('utf-8')):
+        if bcrypt.checkpw(
+            user.password.encode("utf-8"), result.password.encode("utf-8")
+        ):
+            access_token = create_access_token(email=result.email)
             return {
                 "message": "Login successful",
                 "email": result.email,
+                "access_token": access_token,
+                "token_type": "bearer",
+                "expires_in": ACCESS_TOKEN_EXPIRE_HOURS * 3600,
             }
         else:
             raise HTTPException(status_code=401, detail="Invalid password")
@@ -90,14 +96,15 @@ def login(user: UserLogin, db=Depends(get_db)):
         if user.password == result.password:
             # Login successful - now hash and update the password
             hashed_password = bcrypt.hashpw(
-                user.password.encode('utf-8'), 
-                bcrypt.gensalt()
-            ).decode('utf-8')
-            
-            update_query = text("UPDATE users SET password = :password WHERE email = :email")
+                user.password.encode("utf-8"), bcrypt.gensalt()
+            ).decode("utf-8")
+
+            update_query = text(
+                "UPDATE users SET password = :password WHERE email = :email"
+            )
             db.execute(update_query, {"password": hashed_password, "email": user.email})
             db.commit()
-            
+
             print(f"✅ Password migrated to bcrypt hash for {user.email}")
             return {
                 "message": "Login successful",

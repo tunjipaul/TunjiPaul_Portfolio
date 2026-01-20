@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional, List
 from database import get_db, About
+from auth_utils import get_current_user
 
 router = APIRouter(prefix="/api/about", tags=["About"])
 
@@ -54,10 +55,14 @@ def get_about(about_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("", response_model=AboutResponse, status_code=201)
-def create_about(about: AboutCreate, db: Session = Depends(get_db)):
-    
+def create_about(
+    about: AboutCreate,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user),
+):
+
     education_data = [edu.dict() for edu in about.education] if about.education else []
-    
+
     new_about = About(
         title=about.title,
         content=about.content,
@@ -71,17 +76,22 @@ def create_about(about: AboutCreate, db: Session = Depends(get_db)):
 
 
 @router.put("/{about_id}", response_model=AboutResponse)
-def update_about(about_id: int, about: AboutUpdate, db: Session = Depends(get_db)):
+def update_about(
+    about_id: int,
+    about: AboutUpdate,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user),
+):
     db_about = db.query(About).filter(About.id == about_id).first()
     if not db_about:
         raise HTTPException(status_code=404, detail="About section not found")
 
     update_data = about.dict(exclude_unset=True)
-    
+
     # Convert education items to dict format if present
     if "education" in update_data and update_data["education"] is not None:
         update_data["education"] = [edu.dict() for edu in about.education]
-    
+
     for key, value in update_data.items():
         setattr(db_about, key, value)
 
@@ -91,7 +101,11 @@ def update_about(about_id: int, about: AboutUpdate, db: Session = Depends(get_db
 
 
 @router.delete("/{about_id}", status_code=204)
-def delete_about(about_id: int, db: Session = Depends(get_db)):
+def delete_about(
+    about_id: int,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user),
+):
     db_about = db.query(About).filter(About.id == about_id).first()
     if not db_about:
         raise HTTPException(status_code=404, detail="About section not found")

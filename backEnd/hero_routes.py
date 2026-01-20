@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional, List
 from database import get_db, Hero
+from auth_utils import get_current_user
 
 router = APIRouter(prefix="/api/hero", tags=["Hero"])
 
@@ -48,7 +49,11 @@ def get_hero(hero_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("", response_model=HeroResponse, status_code=201)
-def create_hero(hero: HeroCreate, db: Session = Depends(get_db)):
+def create_hero(
+    hero: HeroCreate,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user),
+):
     new_hero = Hero(
         title=hero.title,
         subtitle=hero.subtitle,
@@ -63,7 +68,12 @@ def create_hero(hero: HeroCreate, db: Session = Depends(get_db)):
 
 
 @router.put("/{hero_id}", response_model=HeroResponse)
-def update_hero(hero_id: int, hero: HeroUpdate, db: Session = Depends(get_db)):
+def update_hero(
+    hero_id: int,
+    hero: HeroUpdate,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user),
+):
     db_hero = db.query(Hero).filter(Hero.id == hero_id).first()
     if not db_hero:
         raise HTTPException(status_code=404, detail=f"Hero with id {hero_id} not found")
@@ -78,7 +88,11 @@ def update_hero(hero_id: int, hero: HeroUpdate, db: Session = Depends(get_db)):
 
 
 @router.delete("/{hero_id}", status_code=204)
-def delete_hero(hero_id: int, db: Session = Depends(get_db)):
+def delete_hero(
+    hero_id: int,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user),
+):
     db_hero = db.query(Hero).filter(Hero.id == hero_id).first()
     if not db_hero:
         raise HTTPException(status_code=404, detail=f"Hero with id {hero_id} not found")

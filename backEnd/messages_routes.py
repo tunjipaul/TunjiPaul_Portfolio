@@ -6,6 +6,7 @@ from database import get_db, Message
 import os
 from dotenv import load_dotenv
 import resend
+from auth_utils import get_current_user
 
 load_dotenv()
 
@@ -93,14 +94,21 @@ def send_email_notification(name: str, email: str, subject: str, message_content
 
 
 @router.get("", response_model=list[MessageResponse])
-def get_all_messages(db: Session = Depends(get_db)):
+def get_all_messages(
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user)
+):
     """Get all messages (admin panel)"""
     messages = db.query(Message).order_by(Message.created_at.desc()).all()
     return messages
 
 
 @router.get("/{message_id}", response_model=MessageResponse)
-def get_message(message_id: int, db: Session = Depends(get_db)):
+def get_message(
+    message_id: int,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user)
+):
     """Get a specific message by ID"""
     message = db.query(Message).filter(Message.id == message_id).first()
     if not message:
@@ -126,8 +134,11 @@ def create_message(msg: MessageCreate, db: Session = Depends(get_db)):
 
 @router.put("/{message_id}", response_model=MessageResponse)
 def update_message(
-    message_id: int, msg_update: MessageUpdate, db: Session = Depends(get_db)
-):
+    message_id: int,
+    msg_update: MessageUpdate,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user)
+)::
     """Mark message as read/unread"""
     db_message = db.query(Message).filter(Message.id == message_id).first()
     if not db_message:
@@ -140,7 +151,11 @@ def update_message(
 
 
 @router.delete("/{message_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_message(message_id: int, db: Session = Depends(get_db)):
+def delete_message(
+    message_id: int,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user)
+):
     """Delete a message"""
     db_message = db.query(Message).filter(Message.id == message_id).first()
     if not db_message:
@@ -157,7 +172,11 @@ class ReplyCreate(BaseModel):
 
 
 @router.post("/reply", status_code=status.HTTP_200_OK)
-def send_reply(reply: ReplyCreate, db: Session = Depends(get_db)):
+def send_reply(
+    reply: ReplyCreate,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user)
+):
     """Send a reply to a message using Resend"""
     try:
         if not resend.api_key:

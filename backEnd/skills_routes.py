@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 from database import get_db, Skill
 from datetime import datetime
+from auth_utils import get_current_user
 
 router = APIRouter(prefix="/api/skills", tags=["Skills"])
 
@@ -27,7 +28,6 @@ class SkillUpdate(BaseModel):
 class SkillResponse(SkillBase):
     id: int
     created_at: datetime
-    
 
     class Config:
         from_attributes = True
@@ -50,13 +50,19 @@ def get_skill(skill_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("", response_model=SkillResponse, status_code=201)
-def create_skill(skill: SkillCreate, db: Session = Depends(get_db)):
+def create_skill(
+    skill: SkillCreate,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user),
+):
     """Create a new skill"""
     # Check if skill with same name already exists
     existing_skill = db.query(Skill).filter(Skill.name == skill.name).first()
     if existing_skill:
-        raise HTTPException(status_code=400, detail="Skill with this name already exists")
-    
+        raise HTTPException(
+            status_code=400, detail="Skill with this name already exists"
+        )
+
     new_skill = Skill(name=skill.name, category=skill.category)
     db.add(new_skill)
     db.commit()
@@ -65,17 +71,23 @@ def create_skill(skill: SkillCreate, db: Session = Depends(get_db)):
 
 
 @router.put("/{skill_id}", response_model=SkillResponse)
-def update_skill(skill_id: int, skill: SkillUpdate, db: Session = Depends(get_db)):
+def update_skill(
+    skill_id: int,
+    skill: SkillUpdate,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user),
+):
     """Update a skill"""
     db_skill = db.query(Skill).filter(Skill.id == skill_id).first()
     if not db_skill:
         raise HTTPException(status_code=404, detail="Skill not found")
 
-    
     if skill.name and skill.name != db_skill.name:
         existing_skill = db.query(Skill).filter(Skill.name == skill.name).first()
         if existing_skill:
-            raise HTTPException(status_code=400, detail="Skill with this name already exists")
+            raise HTTPException(
+                status_code=400, detail="Skill with this name already exists"
+            )
 
     update_data = skill.dict(exclude_unset=True)
     for key, value in update_data.items():
@@ -87,7 +99,11 @@ def update_skill(skill_id: int, skill: SkillUpdate, db: Session = Depends(get_db
 
 
 @router.delete("/{skill_id}", status_code=204)
-def delete_skill(skill_id: int, db: Session = Depends(get_db)):
+def delete_skill(
+    skill_id: int,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user),
+):
     """Delete a skill"""
     db_skill = db.query(Skill).filter(Skill.id == skill_id).first()
     if not db_skill:
