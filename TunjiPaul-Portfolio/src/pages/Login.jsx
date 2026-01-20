@@ -12,7 +12,6 @@ function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // ✅ Check if already logged in
     const isLoggedIn = localStorage.getItem("isLoggedIn");
     if (isLoggedIn === "true") {
       navigate("/dashboard");
@@ -43,7 +42,6 @@ function Login() {
         throw new Error(data.detail || "Login failed");
       }
 
-      // Store JWT token and expiration
       const expiryTime = Date.now() + (data.expires_in * 1000);
       localStorage.setItem("accessToken", data.access_token);
       localStorage.setItem("tokenExpiry", expiryTime.toString());

@@ -58,12 +58,10 @@ export default function ManageSkills() {
         ? `${API_URL}/api/skills/${editingId}`
         : `${API_URL}/api/skills`;
 
-      const response = await apiRequest(url.replace(API_URL, ''), {
+      await apiRequest(url.replace(API_URL, ''), {
         method,
         body: JSON.stringify(formData),
       });
-
-      // apiRequest already handles errors and returns parsed JSON
 
       setFormData({ name: "", category: "Frontend", icon: "" });
       setEditingId(null);
@@ -92,7 +90,6 @@ export default function ManageSkills() {
         method: "DELETE",
       });
 
-      // apiRequest already handles errors
       fetchSkills();
       setError(null);
     } catch (err) {

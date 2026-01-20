@@ -17,22 +17,17 @@ class ErrorBoundary extends React.Component {
     };
   }
 
-  static getDerivedStateFromError(error) {
-    // Update state so the next render will show the fallback UI
+  static getDerivedStateFromError() {
     return { hasError: true };
   }
 
   componentDidCatch(error, errorInfo) {
-    // Log error details for debugging
     console.error('Error Boundary caught an error:', error, errorInfo);
     
     this.setState({
       error,
       errorInfo,
     });
-
-    // You can also log the error to an error reporting service here
-    // Example: logErrorToService(error, errorInfo);
   }
 
   handleReset = () => {
@@ -71,7 +66,7 @@ class ErrorBoundary extends React.Component {
             </p>
 
             {/* Error Details (Only in development) */}
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {import.meta.env.DEV && this.state.error && (
               <div className="mb-6 p-4 bg-gray-100 rounded-lg">
                 <p className="text-sm font-semibold text-gray-700 mb-2">
                   Error Details (Development Only):

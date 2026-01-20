@@ -50,7 +50,6 @@ async def upload_document(
     - Validates file content
     """
 
-    # Validate file extension
     if not file.filename:
         raise HTTPException(status_code=400, detail="Filename is required")
 
@@ -60,7 +59,6 @@ async def upload_document(
             status_code=400, detail=f"Only PDF files are allowed. Received: {file_ext}"
         )
 
-    # Validate type parameter
     if type not in ["resume", "cv"]:
         raise HTTPException(status_code=400, detail="Type must be 'resume' or 'cv'")
 

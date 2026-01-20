@@ -75,9 +75,7 @@ def login(user: UserLogin, db=Depends(get_db)):
     if not result:
         raise HTTPException(status_code=404, detail="User not found")
 
-    # Check if password is already hashed (bcrypt hashes start with $2b$)
     if result.password.startswith("$2b$"):
-        # Password is hashed - verify using bcrypt
         if bcrypt.checkpw(
             user.password.encode("utf-8"), result.password.encode("utf-8")
         ):
@@ -92,9 +90,7 @@ def login(user: UserLogin, db=Depends(get_db)):
         else:
             raise HTTPException(status_code=401, detail="Invalid password")
     else:
-        # Password is plain text - migrate it on successful login
         if user.password == result.password:
-            # Login successful - now hash and update the password
             hashed_password = bcrypt.hashpw(
                 user.password.encode("utf-8"), bcrypt.gensalt()
             ).decode("utf-8")

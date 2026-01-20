@@ -42,7 +42,10 @@ class MessageUpdate(BaseModel):
     is_read: bool = Field(..., example=True)
 
 
-# Email function using Resend
+class MessageUpdate(BaseModel):
+    is_read: bool = Field(..., example=True)
+
+
 def send_email_notification(name: str, email: str, subject: str, message_content: str):
     """Send email notification to admin using Resend"""
     try:

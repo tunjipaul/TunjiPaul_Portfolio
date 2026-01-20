@@ -10,7 +10,7 @@ import DashboardHome from "./DashboardHome";
 
 function AdminDashboard() {
   const [open, setOpen] = useState(false);
-  const [email, setEmail] = useState("");
+  const email = localStorage.getItem("adminEmail") || "";
   const [activeSection, setActiveSection] = useState("home");
   const navigate = useNavigate();
 
@@ -20,8 +20,6 @@ function AdminDashboard() {
 
     if (!isLoggedIn || !storedEmail) {
       navigate("/admin");
-    } else {
-      setEmail(storedEmail);
     }
   }, [navigate]);
 

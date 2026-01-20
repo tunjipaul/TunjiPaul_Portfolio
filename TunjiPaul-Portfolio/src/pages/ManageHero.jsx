@@ -2,18 +2,18 @@ import { useEffect, useState } from "react";
 import API_URL from "../config";
 import apiRequest from "../utils/api";
 
+const defaultHero = {
+  title: "Hi, I'm Tunji Paul",
+  subtitle:
+    "By day, I'm an AI Developer building intelligent, scalable solutions. By night, I'm an analyst of politics and governance, an occasional writer, and a public speaker on topics that matter. And if the world ever seems like it's coming to an end? Don't worry, that's when my sense of humor truly shines.",
+  view_button_text: "View Projects",
+  contact_button_text: "Contact Me",
+  image_url: "",
+};
+
 function ManageHero() {
   const [hero, setHero] = useState(null);
   const [heroId, setHeroId] = useState(null);
-
-  const defaultHero = {
-    title: "Hi, I'm Tunji Paul",
-    subtitle:
-      "By day, I'm an AI Developer building intelligent, scalable solutions. By night, I'm an analyst of politics and governance, an occasional writer, and a public speaker on topics that matter. And if the world ever seems like it's coming to an end? Don't worry, that's when my sense of humor truly shines.",
-    view_button_text: "View Projects",
-    contact_button_text: "Contact Me",
-    image_url: "",
-  };
 
   useEffect(() => {
     async function fetchOrCreateHero() {

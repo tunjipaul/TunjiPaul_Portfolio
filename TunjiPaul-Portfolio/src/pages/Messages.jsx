@@ -104,7 +104,7 @@ function Messages() {
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       window.open(url, "_blank");
-    } catch (err) {
+    } catch {
       alert("Failed to preview file");
     }
   };
@@ -126,8 +126,6 @@ function Messages() {
 
   const toggleRead = async (id, isRead) => {
     try {
-      console.log(`Toggling message ${id} from ${isRead} to ${!isRead}`);
-
       const response = await fetch(`${API_URL}/api/messages/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -141,7 +139,6 @@ function Messages() {
       }
 
       const updatedMessage = await response.json();
-      console.log("Updated message:", updatedMessage);
 
       setMessages(
         messages.map((msg) => (msg.id === id ? updatedMessage : msg))

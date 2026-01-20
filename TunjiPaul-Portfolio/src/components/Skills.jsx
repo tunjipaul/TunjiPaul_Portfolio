@@ -68,7 +68,6 @@ const getIcon = (skillName, iconFromDB) => {
 
 export default function Skills() {
   const [skillsData, setSkillsData] = useState(fallbackSkillsData);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchSkills();
@@ -106,8 +105,6 @@ export default function Skills() {
       }
     } catch (err) {
       console.error("Error fetching skills:", err);
-    } finally {
-      setLoading(false);
     }
   };
 
