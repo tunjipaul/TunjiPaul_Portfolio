@@ -31,7 +31,9 @@ if not db_url:
     db_name = os.getenv("DB_NAME", "portfolio_db")
     db_url = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
 
-engine = create_engine(db_url)
+engine = create_engine(
+    db_url, pool_pre_ping=True, pool_recycle=3600, pool_size=10, max_overflow=20
+)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
