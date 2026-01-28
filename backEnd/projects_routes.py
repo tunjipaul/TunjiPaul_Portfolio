@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 from datetime import datetime
+from typing import Optional
 from database import get_db, Project
 from auth_utils import get_current_user
 
@@ -13,30 +14,38 @@ class ProjectCreate(BaseModel):
     desc: str = Field(
         ..., min_length=1, example="Fullstack app using FastAPI, MySQL, React"
     )
-    github: str = Field(
+    github: Optional[str] = Field(
         default=None, example="https://github.com/yourrepo/contact-manager"
     )
-    demo: str = Field(default=None, example="https://contact-manager-demo.com")
-    image_url: str = Field(
+    demo: Optional[str] = Field(
+        default=None, example="https://contact-manager-demo.com"
+    )
+    image_url: Optional[str] = Field(
         default=None, example="https://res.cloudinary.com/example/image.png"
     )
 
 
 class ProjectUpdate(BaseModel):
-    title: str = Field(None, example="Contact Manager App")
-    desc: str = Field(None, example="Fullstack app using FastAPI, MySQL, React")
-    github: str = Field(None, example="https://github.com/yourrepo/contact-manager")
-    demo: str = Field(None, example="https://contact-manager-demo.com")
-    image_url: str = Field(None, example="https://res.cloudinary.com/example/image.png")
+    title: Optional[str] = Field(None, example="Contact Manager App")
+    desc: Optional[str] = Field(
+        None, example="Fullstack app using FastAPI, MySQL, React"
+    )
+    github: Optional[str] = Field(
+        None, example="https://github.com/yourrepo/contact-manager"
+    )
+    demo: Optional[str] = Field(None, example="https://contact-manager-demo.com")
+    image_url: Optional[str] = Field(
+        None, example="https://res.cloudinary.com/example/image.png"
+    )
 
 
 class ProjectResponse(BaseModel):
     id: int
     title: str
     desc: str
-    github: str = None
-    demo: str = None
-    image_url: str = None
+    github: Optional[str] = None
+    demo: Optional[str] = None
+    image_url: Optional[str] = None
     created_at: datetime
     updated_at: datetime
 
