@@ -4,6 +4,7 @@ import Admin from "./pages/Admin";
 import AdminDashboard from "./pages/AdminDashboard";
 import MoreProjects from "./pages/MoreProjects";
 import ErrorBoundary from "./components/ErrorBoundary";
+import ChatBot from "./components/ChatBot";
 
 function ProtectedRoute({ children }) {
   const isLoggedIn = localStorage.getItem("isLoggedIn");
@@ -26,6 +27,7 @@ function App() {
           }
         />
       </Routes>
+      <ChatBot />
     </ErrorBoundary>
   );
 }

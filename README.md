@@ -18,9 +18,10 @@ A modern, feature-rich portfolio website built with **FastAPI** (Python) backend
 - **Secure Authentication**: JWT-based login system with bcrypt password hashing
 - **Content Management**: Full CRUD operations for all sections (Hero, About, Projects, Skills)
 - **Message Management**: View, mark as read, reply to, and delete contact form submissions
-- **Document Upload**: Upload and manage resume/CV PDF files
+- **Document Upload**: Upload and manage resume/CV PDF files with database persistence
 - **Real-time Updates**: All changes reflect immediately on the public site
 - **Protected Routes**: Role-based access control for admin-only endpoints
+- **Health Monitoring**: Health check endpoint for uptime monitoring
 
 ## 🛠️ Tech Stack
 
@@ -34,7 +35,8 @@ A modern, feature-rich portfolio website built with **FastAPI** (Python) backend
 - **[JWT](https://jwt.io/)**: JSON Web Tokens for authentication
 - **[Resend](https://resend.com/)**: Modern email API for contact form notifications
 - **[python-multipart](https://pypi.org/project/python-multipart/)**: File upload support
-- **[Alembic](https://alembic.sqlalchemy.org/)**: Database migration tool
+- **[Alembic](https://alembic.sqlalchemy.org/)**: Database migration tool for version-controlled schema changes
+- **[Aiven](https://aiven.io/)**: Managed PostgreSQL database hosting
 
 ### Frontend
 
@@ -230,8 +232,12 @@ Once the backend server is running, interactive API documentation is available a
 
 - `GET /api/resume/current` - Get current uploaded files info
 - `GET /api/resume/download/{type}` - Download resume or CV (type: `resume` or `cv`)
-- `POST /api/resume/upload` - Upload resume or CV PDF ✅ _Protected_
+- `POST /api/resume/upload` - Upload resume or CV PDF (stored in database) ✅ _Protected_
 - `DELETE /api/resume/delete/{type}` - Delete resume or CV ✅ _Protected_
+
+### Health Check
+
+- `GET /health` - Health check endpoint for uptime monitoring
 
 ## 📁 Project Structure
 
@@ -336,6 +342,18 @@ TunjiPaul_Portfolio/
 | `is_read`    | BOOLEAN      | DEFAULT FALSE | Read status          |
 | `created_at` | TIMESTAMP    | DEFAULT NOW() | Creation timestamp   |
 
+### Documents Table
+
+| Column        | Type         | Constraints      | Description                  |
+| ------------- | ------------ | ---------------- | ---------------------------- |
+| `id`          | SERIAL       | PRIMARY KEY      | Auto-incrementing ID         |
+| `type`        | VARCHAR(50)  | UNIQUE, NOT NULL | Document type (resume or cv) |
+| `filename`    | VARCHAR(255) | NOT NULL         | Original filename            |
+| `content`     | BYTEA        | NOT NULL         | PDF binary data              |
+| `size`        | INTEGER      | NOT NULL         | File size in bytes           |
+| `uploaded_at` | TIMESTAMP    | DEFAULT NOW()    | Upload timestamp             |
+| `updated_at`  | TIMESTAMP    | DEFAULT NOW()    | Last update timestamp        |
+
 ## 🔒 Security Features
 
 - **JWT Authentication**: Secure token-based authentication for admin routes
@@ -379,11 +397,13 @@ The application uses **Resend** for professional email delivery:
 uvicorn app:app --host 0.0.0.0 --port $PORT
 ```
 
-4. **Build command** (if needed):
+4. **Build command** (includes Alembic migrations):
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements.txt && alembic upgrade head
 ```
+
+5. **Optional: Set up uptime monitoring** using services like UptimeRobot to ping `/health` endpoint every 5 minutes to prevent free-tier spin-down
 
 ### Frontend Deployment (Vercel)
 

@@ -15,6 +15,7 @@ from projects_routes import router as project_router
 from messages_routes import router as message_router
 from skills_routes import router as skills_router
 from resume_routes import router as resume_router
+from chatbot_routes import router as chatbot_router
 
 
 try:
@@ -55,6 +56,7 @@ app.include_router(project_router)
 app.include_router(message_router)
 app.include_router(skills_router)
 app.include_router(resume_router)
+app.include_router(chatbot_router)
 
 
 @app.exception_handler(RequestValidationError)
