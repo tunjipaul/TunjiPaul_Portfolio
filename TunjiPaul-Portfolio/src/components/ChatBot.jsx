@@ -76,6 +76,47 @@ const ChatBot = () => {
     setConversationId(null);
   };
 
+  const renderMessageContent = (content) => {
+    const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+|[a-zA-Z0-9.-]+\.(com|org|net|io|dev|app|vercel\.app)[^\s]*)/g;
+    const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/g;
+    
+    let parts = content.split(urlRegex);
+    
+    return parts.map((part, index) => {
+      if (part.match(urlRegex)) {
+        let url = part;
+        if (!url.startsWith('http')) {
+          url = 'https://' + url;
+        }
+        return (
+          <a
+            key={index}
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="chat-link"
+          >
+            {part}
+          </a>
+        );
+      }
+      
+      if (part.match(emailRegex)) {
+        return (
+          <a
+            key={index}
+            href={`mailto:${part}`}
+            className="chat-link"
+          >
+            {part}
+          </a>
+        );
+      }
+      
+      return part;
+    });
+  };
+
   return (
     <>
       <div className={`chatbot-container ${isOpen ? 'open' : ''}`}>
@@ -101,7 +142,7 @@ const ChatBot = () => {
           {messages.map((msg, index) => (
             <div key={index} className={`message ${msg.role}`}>
               <div className="message-content">
-                {msg.content}
+                {renderMessageContent(msg.content)}
               </div>
             </div>
           ))}

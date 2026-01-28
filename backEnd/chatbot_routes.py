@@ -152,9 +152,9 @@ REAL-TIME PORTFOLIO DATA (use this as your primary source):
 
 Contact Information:
 - Email: tunjipaul007@gmail.com
-- GitHub: github.com/tunjipaul
-- Portfolio: tunji-paul-portfolio.vercel.app
-- LinkedIn: linkedin.com/in/paul-ogor-gmnse-9103601b1
+- GitHub: https://github.com/tunjipaul
+- Portfolio: https://tunji-paul-portfolio.vercel.app
+- LinkedIn: https://www.linkedin.com/in/paul-ogor-gmnse-9103601b1
 
 Instructions:
 - Be friendly, professional, and concise

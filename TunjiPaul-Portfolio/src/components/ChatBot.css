@@ -211,6 +211,22 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
+.chat-link {
+  color: #ea580c;
+  text-decoration: underline;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.chat-link:hover {
+  color: #c2410c;
+}
+
+.message.user .chat-link {
+  color: #fff;
+  text-decoration: underline;
+}
+
 .message-content.typing {
   display: flex;
   gap: 4px;
