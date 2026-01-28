@@ -25,10 +25,7 @@ rate_limit_cache = defaultdict(list)
 MAX_REQUESTS_PER_MINUTE = 10
 
 conversation_memory = defaultdict(list)
-MAX_MEMORY_LENGTH = 5
-
-response_cache = {}
-CACHE_EXPIRY_HOURS = 24
+MAX_MEMORY_LENGTH = 20
 
 
 class ChatMessage(BaseModel):
@@ -39,7 +36,6 @@ class ChatMessage(BaseModel):
 class ChatResponse(BaseModel):
     response: str
     conversation_id: str
-    cached: bool = False
 
 
 def check_rate_limit(ip_address: str):
@@ -57,34 +53,6 @@ def check_rate_limit(ip_address: str):
         )
 
     rate_limit_cache[ip_address].append(now)
-
-
-def get_cache_key(message: str) -> str:
-    """Generate cache key from message"""
-    normalized = message.lower().strip()
-    return hashlib.md5(normalized.encode()).hexdigest()
-
-
-def get_cached_response(message: str) -> str | None:
-    """Get cached response if available and not expired"""
-    cache_key = get_cache_key(message)
-
-    if cache_key in response_cache:
-        cached_data = response_cache[cache_key]
-        cached_time = cached_data["timestamp"]
-
-        if datetime.now() - cached_time < timedelta(hours=CACHE_EXPIRY_HOURS):
-            return cached_data["response"]
-        else:
-            del response_cache[cache_key]
-
-    return None
-
-
-def cache_response(message: str, response: str):
-    """Cache a response"""
-    cache_key = get_cache_key(message)
-    response_cache[cache_key] = {"response": response, "timestamp": datetime.now()}
 
 
 def fetch_portfolio_context(db: Session) -> str:
@@ -151,11 +119,16 @@ REAL-TIME PORTFOLIO DATA (use this as your primary source):
 {db_context}
 
 Contact Information:
-- Email: tunjipaul007@gmail.com
+- Email (Primary): tunjipaul007@gmail.com
+- Email (Secondary): ogorpaul877@gmail.com
+- Phone: +2349019978821
+- Location: Lagos, Nigeria
 - GitHub: https://github.com/tunjipaul
-- Portfolio: https://tunji-paul-portfolio.vercel.app
 - LinkedIn: https://www.linkedin.com/in/paul-ogor-gmnse-9103601b1
-- Medium (Writing/Articles): https://medium.com/@tunjipaul007
+- Twitter/X: https://x.com/tunji_paul_
+- Instagram: https://www.instagram.com/_tunji_paul/
+- Medium (Writing/Articles): https://medium.com/@tunji_paul_
+- Portfolio: https://tunji-paul-portfolio.vercel.app
 
 Instructions:
 - Be friendly, professional, and concise
@@ -177,7 +150,6 @@ async def chat(message: ChatMessage, request: Request, db: Session = Depends(get
     - Rate limited to 10 requests per minute per IP
     - Maintains conversation context (last 5 messages)
     - Uses RAG to fetch real-time data from database
-    - Caches responses for 24 hours to reduce API calls
     - Returns AI-generated response about the portfolio
     """
 
@@ -190,15 +162,6 @@ async def chat(message: ChatMessage, request: Request, db: Session = Depends(get
     if len(message.message) > 500:
         raise HTTPException(
             status_code=400, detail="Message too long (max 500 characters)"
-        )
-
-    cached_response = get_cached_response(message.message)
-    if cached_response:
-        conversation_id = (
-            message.conversation_id or f"{client_ip}_{datetime.now().timestamp()}"
-        )
-        return ChatResponse(
-            response=cached_response, conversation_id=conversation_id, cached=True
         )
 
     conversation_id = (
@@ -220,8 +183,6 @@ async def chat(message: ChatMessage, request: Request, db: Session = Depends(get
         response = llm.invoke(messages)
         ai_message = response.content
 
-        cache_response(message.message, ai_message)
-
         conversation_memory[conversation_id].append(
             {"role": "user", "content": message.message}
         )
@@ -234,9 +195,7 @@ async def chat(message: ChatMessage, request: Request, db: Session = Depends(get
                 -MAX_MEMORY_LENGTH * 2 :
             ]
 
-        return ChatResponse(
-            response=ai_message, conversation_id=conversation_id, cached=False
-        )
+        return ChatResponse(response=ai_message, conversation_id=conversation_id)
 
     except Exception as e:
         print(f"Chatbot error: {str(e)}")
@@ -253,25 +212,3 @@ async def clear_conversation(conversation_id: str):
         del conversation_memory[conversation_id]
         return {"message": "Conversation cleared successfully"}
     return {"message": "Conversation not found"}
-
-
-@router.get("/api/chatbot/cache/stats")
-async def get_cache_stats():
-    """Get cache statistics (for debugging)"""
-    valid_cache = 0
-    expired_cache = 0
-
-    for cache_key, cached_data in response_cache.items():
-        if datetime.now() - cached_data["timestamp"] < timedelta(
-            hours=CACHE_EXPIRY_HOURS
-        ):
-            valid_cache += 1
-        else:
-            expired_cache += 1
-
-    return {
-        "total_cached": len(response_cache),
-        "valid_cache": valid_cache,
-        "expired_cache": expired_cache,
-        "cache_expiry_hours": CACHE_EXPIRY_HOURS,
-    }
