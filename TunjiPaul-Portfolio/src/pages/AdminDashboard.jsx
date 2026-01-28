@@ -129,7 +129,7 @@ function AdminDashboard() {
         </nav>
       </aside>
 
-      <main className="flex-1 p-6 md:ml-64">
+      <main className="flex-1 p-6 pt-16 md:pt-6 md:ml-64">
         <h1 className="text-3xl font-bold text-orange-600 mb-6">Dashboard</h1>
         <div className="bg-white rounded-xl shadow p-6">
           <p className="text-gray-700 font-bold">
