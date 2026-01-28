@@ -63,6 +63,7 @@ class Project(Base):
     desc = Column(String(1000), nullable=False)
     github = Column(String(500), nullable=True)
     demo = Column(String(500), nullable=True)
+    image_url = Column(String(500), nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(
         DateTime,
@@ -183,6 +184,7 @@ def create_tables():
             "desc" VARCHAR(1000) NOT NULL,
             github VARCHAR(500),
             demo VARCHAR(500),
+            image_url VARCHAR(500),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );

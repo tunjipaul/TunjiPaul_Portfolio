@@ -17,6 +17,9 @@ class ProjectCreate(BaseModel):
         default=None, example="https://github.com/yourrepo/contact-manager"
     )
     demo: str = Field(default=None, example="https://contact-manager-demo.com")
+    image_url: str = Field(
+        default=None, example="https://res.cloudinary.com/example/image.png"
+    )
 
 
 class ProjectUpdate(BaseModel):
@@ -24,6 +27,7 @@ class ProjectUpdate(BaseModel):
     desc: str = Field(None, example="Fullstack app using FastAPI, MySQL, React")
     github: str = Field(None, example="https://github.com/yourrepo/contact-manager")
     demo: str = Field(None, example="https://contact-manager-demo.com")
+    image_url: str = Field(None, example="https://res.cloudinary.com/example/image.png")
 
 
 class ProjectResponse(BaseModel):
@@ -32,6 +36,7 @@ class ProjectResponse(BaseModel):
     desc: str
     github: str = None
     demo: str = None
+    image_url: str = None
     created_at: datetime
     updated_at: datetime
 
@@ -73,7 +78,11 @@ def create_project(
 ):
     """Create a new project"""
     db_project = Project(
-        title=project.title, desc=project.desc, github=project.github, demo=project.demo
+        title=project.title,
+        desc=project.desc,
+        github=project.github,
+        demo=project.demo,
+        image_url=project.image_url,
     )
     db.add(db_project)
     db.commit()
@@ -101,6 +110,8 @@ def update_project(
         db_project.github = project.github
     if project.demo is not None:
         db_project.demo = project.demo
+    if project.image_url is not None:
+        db_project.image_url = project.image_url
 
     db.commit()
     db.refresh(db_project)

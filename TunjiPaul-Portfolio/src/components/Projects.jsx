@@ -65,22 +65,32 @@ function Projects() {
           </div>
         ) : (
           <>
-            <div className="overflow-x-hidden w-full ">
-              <div className="animate-infinite-scroll space-x-6 pb-2 ">
-                {displayProjects.map((project, index) => (
-                  <div
-                    key={index}
-                    className="min-w-[300px] bg-white p-6 rounded-xl shadow-md transition-all duration-500 hover:-translate-y-2 hover:shadow-xl flex-col items-center"
-                  >
-                    <h3 className="text-2xl font-semibold mb-3 text-orange-600 flex-col items-center ">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {displayProjects.map((project, index) => (
+                <div
+                  key={index}
+                  className="bg-white rounded-xl shadow-md transition-all duration-500 hover:-translate-y-2 hover:shadow-xl overflow-hidden flex flex-col"
+                >
+                  {project.image_url && (
+                    <div className="w-full h-48 overflow-hidden bg-gray-100">
+                      <img
+                        src={project.image_url}
+                        alt={project.title}
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  )}
+                  
+                  <div className="p-6 flex-1 flex flex-col">
+                    <h3 className="text-2xl font-semibold mb-3 text-orange-600">
                       {project.title}
                     </h3>
 
-                    <p className=" w-132 flex-col items-center text-gray-600 text-sm leading-relaxed mb-4 wrap-break-word">
+                    <p className="text-gray-600 text-sm leading-relaxed mb-4 flex-1">
                       {project.desc}
                     </p>
 
-                    <div className="flex gap-3 justify-center">
+                    <div className="flex gap-3 justify-center mt-auto">
                       {project.github && (
                         <a
                           href={project.github}
@@ -106,8 +116,8 @@ function Projects() {
                       )}
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
 
             <div className="flex justify-center mt-10">

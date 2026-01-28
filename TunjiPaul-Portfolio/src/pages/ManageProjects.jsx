@@ -10,11 +10,13 @@ function ManageProjects() {
   const [newDesc, setNewDesc] = useState("");
   const [newGithub, setNewGithub] = useState("");
   const [newDemo, setNewDemo] = useState("");
+  const [newImageUrl, setNewImageUrl] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editTitle, setEditTitle] = useState("");
   const [editDesc, setEditDesc] = useState("");
   const [editGithub, setEditGithub] = useState("");
   const [editDemo, setEditDemo] = useState("");
+  const [editImageUrl, setEditImageUrl] = useState("");
 
   useEffect(() => {
     fetchProjects();
@@ -48,12 +50,14 @@ function ManageProjects() {
           desc: newDesc,
           github: newGithub || "",
           demo: newDemo || "",
+          image_url: newImageUrl || "",
         }),
       });
       setNewTitle("");
       setNewDesc("");
       setNewGithub("");
       setNewDemo("");
+      setNewImageUrl("");
       setError(null);
       fetchProjects();
     } catch (err) {
@@ -84,6 +88,7 @@ function ManageProjects() {
     setEditDesc(project.desc);
     setEditGithub(project.github || "");
     setEditDemo(project.demo || "");
+    setEditImageUrl(project.image_url || "");
   };
 
   const handleSave = async (id) => {
@@ -100,6 +105,7 @@ function ManageProjects() {
           desc: editDesc,
           github: editGithub || "",
           demo: editDemo || "",
+          image_url: editImageUrl || "",
         }),
       });
       setProjects(projects.map((p) => (p.id === id ? updatedProject : p)));
@@ -127,42 +133,65 @@ function ManageProjects() {
         </div>
       )}
 
-      <div className="mb-6 flex flex-col md:flex-row gap-4">
-        <input
-          type="text"
-          placeholder="Project Title"
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
-          className="border-gray-300 border px-4 py-2 rounded-lg w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-orange-600"
-        />
-        <input
-          type="text"
-          placeholder="Project Description"
-          value={newDesc}
-          onChange={(e) => setNewDesc(e.target.value)}
-          className="border-gray-300 border px-4 py-2 rounded-lg w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-orange-600"
-        />
-        <input
-          type="text"
-          placeholder="GitHub Link"
-          value={newGithub}
-          onChange={(e) => setNewGithub(e.target.value)}
-          className="border-gray-300 border px-4 py-2 rounded-lg w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-orange-600"
-        />
-        <input
-          type="text"
-          placeholder="Demo Link"
-          value={newDemo}
-          onChange={(e) => setNewDemo(e.target.value)}
-          className="border-gray-300 border px-4 py-2 rounded-lg w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-orange-600"
-        />
-        <button
-          onClick={handleAdd}
-          disabled={loading}
-          className="font-bold bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-500 transition disabled:opacity-50"
-        >
-          Add Project
-        </button>
+      <div className="mb-6">
+        <div className="flex flex-col md:flex-row gap-4 mb-4">
+          <input
+            type="text"
+            placeholder="Project Title"
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            className="border-gray-300 border px-4 py-2 rounded-lg w-full md:w-1/5 focus:outline-none focus:ring-2 focus:ring-orange-600"
+          />
+          <input
+            type="text"
+            placeholder="Project Description"
+            value={newDesc}
+            onChange={(e) => setNewDesc(e.target.value)}
+            className="border-gray-300 border px-4 py-2 rounded-lg w-full md:w-1/5 focus:outline-none focus:ring-2 focus:ring-orange-600"
+          />
+          <input
+            type="text"
+            placeholder="GitHub Link"
+            value={newGithub}
+            onChange={(e) => setNewGithub(e.target.value)}
+            className="border-gray-300 border px-4 py-2 rounded-lg w-full md:w-1/5 focus:outline-none focus:ring-2 focus:ring-orange-600"
+          />
+          <input
+            type="text"
+            placeholder="Demo Link"
+            value={newDemo}
+            onChange={(e) => setNewDemo(e.target.value)}
+            className="border-gray-300 border px-4 py-2 rounded-lg w-full md:w-1/5 focus:outline-none focus:ring-2 focus:ring-orange-600"
+          />
+          <input
+            type="text"
+            placeholder="Image URL (Cloudinary)"
+            value={newImageUrl}
+            onChange={(e) => setNewImageUrl(e.target.value)}
+            className="border-gray-300 border px-4 py-2 rounded-lg w-full md:w-1/5 focus:outline-none focus:ring-2 focus:ring-orange-600"
+          />
+          <button
+            onClick={handleAdd}
+            disabled={loading}
+            className="font-bold bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-500 transition disabled:opacity-50 whitespace-nowrap"
+          >
+            Add Project
+          </button>
+        </div>
+        
+        {newImageUrl && (
+          <div className="mt-2">
+            <p className="text-sm text-gray-600 mb-2">Image Preview:</p>
+            <img 
+              src={newImageUrl} 
+              alt="Preview" 
+              className="w-48 h-32 object-cover rounded-lg border-2 border-gray-300"
+              onError={(e) => {
+                e.target.style.display = 'none';
+              }}
+            />
+          </div>
+        )}
       </div>
 
       {loading ? (
@@ -188,28 +217,35 @@ function ManageProjects() {
                       value={editTitle}
                       placeholder="Project Title"
                       onChange={(e) => setEditTitle(e.target.value)}
-                      className="border px-4 py-2 rounded-lg w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-orange-600"
+                      className="border px-4 py-2 rounded-lg w-full md:w-1/5 focus:outline-none focus:ring-2 focus:ring-orange-600"
                     />
                     <input
                       type="text"
                       value={editDesc}
                       placeholder="Project Description"
                       onChange={(e) => setEditDesc(e.target.value)}
-                      className="border px-4 py-2 rounded-lg w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-orange-600"
+                      className="border px-4 py-2 rounded-lg w-full md:w-1/5 focus:outline-none focus:ring-2 focus:ring-orange-600"
                     />
                     <input
                       type="text"
                       value={editGithub}
                       placeholder="GitHub Link"
                       onChange={(e) => setEditGithub(e.target.value)}
-                      className="border px-4 py-2 rounded-lg w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-orange-600"
+                      className="border px-4 py-2 rounded-lg w-full md:w-1/5 focus:outline-none focus:ring-2 focus:ring-orange-600"
                     />
                     <input
                       type="text"
                       value={editDemo}
                       placeholder="Demo Link"
                       onChange={(e) => setEditDemo(e.target.value)}
-                      className="border px-4 py-2 rounded-lg w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-orange-600"
+                      className="border px-4 py-2 rounded-lg w-full md:w-1/5 focus:outline-none focus:ring-2 focus:ring-orange-600"
+                    />
+                    <input
+                      type="text"
+                      value={editImageUrl}
+                      placeholder="Image URL"
+                      onChange={(e) => setEditImageUrl(e.target.value)}
+                      className="border px-4 py-2 rounded-lg w-full md:w-1/5 focus:outline-none focus:ring-2 focus:ring-orange-600"
                     />
                   </div>
                 ) : (
