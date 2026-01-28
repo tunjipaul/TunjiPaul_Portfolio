@@ -20,9 +20,12 @@ from resume_routes import router as resume_router
 try:
     create_tables()
     print("Tables created/verified successfully")
+    print("Note: For future schema changes, use Alembic migrations:")
+    print("  - Create migration: alembic revision --autogenerate -m 'description'")
+    print("  - Apply migrations: alembic upgrade head")
 except Exception as e:
     print(f"Warning: Could not create tables: {e}")
-    print("Make sure PostgreSQL is running")
+    print("Make sure PostgreSQL is running or run: alembic upgrade head")
 
 app = FastAPI(title="My Personal Portfolio Backend", version="1.0.0")
 
