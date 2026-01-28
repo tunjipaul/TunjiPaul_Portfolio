@@ -8,6 +8,7 @@ from sqlalchemy import (
     JSON,
     DateTime,
     Boolean,
+    LargeBinary,
 )
 from sqlalchemy.orm import sessionmaker, declarative_base
 from dotenv import load_dotenv
@@ -88,6 +89,21 @@ class Skill(Base):
     category = Column(String(255), nullable=False)
     icon = Column(String(255), nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+
+class Document(Base):
+    __tablename__ = "documents"
+    id = Column(Integer, primary_key=True, index=True)
+    type = Column(String(50), nullable=False, unique=True)
+    filename = Column(String(255), nullable=False)
+    content = Column(LargeBinary, nullable=False)
+    size = Column(Integer, nullable=False)
+    uploaded_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(
+        DateTime,
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
 
 
 def get_db():
@@ -202,10 +218,26 @@ def create_tables():
         )
         db.execute(create_messages_query)
 
+        create_documents_query = text(
+            """
+        CREATE TABLE IF NOT EXISTS documents (
+            id SERIAL PRIMARY KEY,
+            type VARCHAR(50) NOT NULL UNIQUE,
+            filename VARCHAR(255) NOT NULL,
+            content BYTEA NOT NULL,
+            size INTEGER NOT NULL,
+            uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        """
+        )
+        db.execute(create_documents_query)
+
         db.commit()
 
         print("Users table ensured and admin inserted.")
         print("Projects table created/verified successfully")
+        print("Documents table created/verified successfully")
 
 
 if __name__ == "__main__":

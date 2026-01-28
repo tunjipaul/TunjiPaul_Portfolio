@@ -1,16 +1,14 @@
 from fastapi import APIRouter, File, UploadFile, HTTPException, Form, Depends
-from fastapi.responses import FileResponse
-import os
-import shutil
+from fastapi.responses import StreamingResponse
+import io
 from pathlib import Path
 import re
 from auth_utils import get_current_user
+from database import get_db, Document
+from sqlalchemy.orm import Session
+from datetime import datetime, timezone
 
 router = APIRouter()
-
-
-UPLOAD_DIR = Path("uploads/documents")
-UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 # Security constants
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
@@ -18,15 +16,9 @@ ALLOWED_EXTENSIONS = {".pdf"}
 PDF_MAGIC_NUMBER = b"%PDF"
 
 
-RESUME_PATH = UPLOAD_DIR / "resume.pdf"
-CV_PATH = UPLOAD_DIR / "cv.pdf"
-
-
 def sanitize_filename(filename: str) -> str:
     """Remove potentially dangerous characters from filename"""
-    # Remove path separators and other dangerous characters
     filename = re.sub(r"[^\w\s.-]", "", filename)
-    # Remove leading dots to prevent hidden files
     filename = filename.lstrip(".")
     return filename
 
@@ -41,6 +33,7 @@ async def upload_document(
     file: UploadFile = File(...),
     type: str = Form(...),
     current_user: str = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
     """
     Upload resume or CV (Admin only)
@@ -48,6 +41,7 @@ async def upload_document(
     - Only accepts PDF files
     - Maximum file size: 10MB
     - Validates file content
+    - Stores in PostgreSQL database
     """
 
     if not file.filename:
@@ -61,8 +55,6 @@ async def upload_document(
 
     if type not in ["resume", "cv"]:
         raise HTTPException(status_code=400, detail="Type must be 'resume' or 'cv'")
-
-    file_path = RESUME_PATH if type == "resume" else CV_PATH
 
     try:
         # Read file content
@@ -81,9 +73,26 @@ async def upload_document(
                 status_code=400, detail="File content is not a valid PDF"
             )
 
-        # Save file
-        with open(file_path, "wb") as buffer:
-            buffer.write(content)
+        # Check if document already exists
+        existing_doc = db.query(Document).filter(Document.type == type).first()
+
+        if existing_doc:
+            # Update existing document
+            existing_doc.filename = sanitize_filename(file.filename)
+            existing_doc.content = content
+            existing_doc.size = len(content)
+            existing_doc.updated_at = datetime.now(timezone.utc)
+        else:
+            # Create new document
+            new_doc = Document(
+                type=type,
+                filename=sanitize_filename(file.filename),
+                content=content,
+                size=len(content),
+            )
+            db.add(new_doc)
+
+        db.commit()
 
         return {
             "message": f"{type.upper()} uploaded successfully",
@@ -94,68 +103,76 @@ async def upload_document(
     except HTTPException:
         raise
     except Exception as e:
-        # Log detailed error server-side only
+        db.rollback()
         print(f"File upload error: {str(e)}")
-        # Return generic error to client
         raise HTTPException(
             status_code=500, detail="Failed to upload file. Please try again."
         )
 
 
 @router.get("/api/resume/download/{type}")
-async def download_document(type: str):
+async def download_document(type: str, db: Session = Depends(get_db)):
     """
     Download resume or CV (Public endpoint)
     """
     if type not in ["resume", "cv"]:
         raise HTTPException(status_code=400, detail="Type must be 'resume' or 'cv'")
 
-    file_path = RESUME_PATH if type == "resume" else CV_PATH
+    document = db.query(Document).filter(Document.type == type).first()
 
-    if not file_path.exists():
+    if not document:
         raise HTTPException(status_code=404, detail=f"{type.upper()} not found")
 
-    return FileResponse(
-        path=file_path,
+    # Create a BytesIO object from the binary content
+    pdf_stream = io.BytesIO(document.content)
+
+    return StreamingResponse(
+        pdf_stream,
         media_type="application/pdf",
-        filename=f"Tunji_Paul_{type.upper()}.pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="Tunji_Paul_{type.upper()}.pdf"'
+        },
     )
 
 
 @router.delete("/api/resume/delete/{type}")
-async def delete_document(type: str, current_user: str = Depends(get_current_user)):
+async def delete_document(
+    type: str,
+    current_user: str = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     """
     Delete resume or CV (Admin only)
     """
     if type not in ["resume", "cv"]:
         raise HTTPException(status_code=400, detail="Type must be 'resume' or 'cv'")
 
-    file_path = RESUME_PATH if type == "resume" else CV_PATH
+    document = db.query(Document).filter(Document.type == type).first()
 
-    if not file_path.exists():
+    if not document:
         raise HTTPException(status_code=404, detail=f"{type.upper()} not found")
 
     try:
-        os.remove(file_path)
+        db.delete(document)
+        db.commit()
         return {"message": f"{type.upper()} deleted successfully", "type": type}
     except Exception as e:
-        # Log detailed error server-side only
+        db.rollback()
         print(f"File deletion error: {str(e)}")
-        # Return generic error to client
         raise HTTPException(
             status_code=500, detail="Failed to delete file. Please try again."
         )
 
 
 @router.get("/api/resume/current")
-async def get_current_files():
+async def get_current_files(db: Session = Depends(get_db)):
     """
     Get information about currently uploaded files (Public endpoint)
     """
-    resume_exists = RESUME_PATH.exists()
-    cv_exists = CV_PATH.exists()
+    resume_doc = db.query(Document).filter(Document.type == "resume").first()
+    cv_doc = db.query(Document).filter(Document.type == "cv").first()
 
     return {
-        "resume": "resume.pdf" if resume_exists else None,
-        "cv": "cv.pdf" if cv_exists else None,
+        "resume": resume_doc.filename if resume_doc else None,
+        "cv": cv_doc.filename if cv_doc else None,
     }
