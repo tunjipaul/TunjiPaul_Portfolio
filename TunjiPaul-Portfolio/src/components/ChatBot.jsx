@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import API_URL from "../config";
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -33,8 +34,11 @@ const ChatBot = () => {
     setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
     setIsLoading(true);
 
+
+
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+      const apiUrl = API_URL;
+      
       const response = await fetch(`${apiUrl}/api/chatbot/message`, {
         method: "POST",
         headers: {
@@ -62,6 +66,7 @@ const ChatBot = () => {
       ]);
     } catch (error) {
       console.error("Chat error:", error);
+
       setMessages((prev) => [
         ...prev,
         {
@@ -87,6 +92,8 @@ const ChatBot = () => {
   };
 
   const renderMessageContent = (content) => {
+    if (!content) return "";
+
     const urlRegex =
       /(https?:\/\/[^\s]+|www\.[^\s]+|[a-zA-Z0-9.-]+\.(com|org|net|io|dev|app|vercel\.app)[^\s]*)/g;
     const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/g;
@@ -94,6 +101,8 @@ const ChatBot = () => {
     let parts = content.split(urlRegex);
 
     return parts.map((part, index) => {
+      if (!part) return null;
+      
       if (part.match(urlRegex)) {
         let url = part;
         if (!url.startsWith("http")) {

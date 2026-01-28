@@ -32,7 +32,7 @@ app = FastAPI(title="My Personal Portfolio Backend", version="1.0.0")
 
 allowed_origins = os.getenv(
     "ALLOWED_ORIGINS",
-    "http://localhost:5173,http://localhost:3000,http://localhost:5174,https://tunji-paul-portfolio.vercel.app",
+    "http://localhost:5173,http://localhost:3000,http://localhost:5174,https://tunji-paul-portfolio.vercel.app,http://127.0.0.1:5173,http://127.0.0.1:3000",
 )
 origins = [origin.strip() for origin in allowed_origins.split(",")]
 
