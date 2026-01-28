@@ -67,6 +67,11 @@ def home():
     return {"message": "Welcome to My Personal Portfolio Backend!"}
 
 
+@app.get("/health")
+def health_check():
+    return {"status": "ok", "service": "portfolio-backend"}
+
+
 @app.post("/login")
 def login(user: UserLogin, db=Depends(get_db)):
     query = text("SELECT * FROM users WHERE email = :email")
