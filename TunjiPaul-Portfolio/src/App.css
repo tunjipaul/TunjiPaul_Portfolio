@@ -1,4 +1,16 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap");
+
+@font-face {
+  font-family: "Agraham";
+  src: url("/fonts/Agraham.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.font-agraham {
+  font-family: "Agraham", "Cinzel", serif;
+}
 
 @keyframes scroll {
   0% {

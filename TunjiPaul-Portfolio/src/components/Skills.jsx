@@ -133,7 +133,7 @@ export default function Skills() {
 
         {skillsData.map((category, idx) => (
           <div key={idx} className="mb-12">
-            <h3 className="text-2xl font-semibold text-orange-400 mb-8 text-center">
+            <h3 className="text-2xl font-semibold text-orange-400 mb-8 text-center font-agraham">
               {category.category}
             </h3>
 
