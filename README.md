@@ -9,7 +9,8 @@ A modern, feature-rich portfolio website built with **FastAPI** (Python) backend
 - **Hero Section**: Dynamic landing page with customizable title, subtitle, and call-to-action buttons
 - **About Section**: Professional bio with education history and profile image
 - **Projects Showcase**: Portfolio projects with GitHub repositories and live demo links
-- **Skills Display**: Categorized technical skills with icons
+- **Skills Display**: Categorized technical skills with proficiency progress bars, custom icons/emojis, and elegant typography
+- **AI Chatbot**: Intelligent RAG-powered assistant that answers questions about the portfolio using real-time database context
 - **Contact Form**: Functional contact form with email notifications via Resend API
 - **Resume/CV Download**: Downloadable PDF documents for resume and CV
 
@@ -17,6 +18,7 @@ A modern, feature-rich portfolio website built with **FastAPI** (Python) backend
 
 - **Secure Authentication**: JWT-based login system with bcrypt password hashing
 - **Content Management**: Full CRUD operations for all sections (Hero, About, Projects, Skills)
+- **Skills Management**: Set proficiency levels (0-100%) with visual sliders and support for both standard icons and emojis
 - **Message Management**: View, mark as read, reply to, and delete contact form submissions
 - **Document Upload**: Upload and manage resume/CV PDF files with database persistence
 - **Real-time Updates**: All changes reflect immediately on the public site
@@ -38,12 +40,29 @@ A modern, feature-rich portfolio website built with **FastAPI** (Python) backend
 - **[Alembic](https://alembic.sqlalchemy.org/)**: Database migration tool for version-controlled schema changes
 - **[Aiven](https://aiven.io/)**: Managed PostgreSQL database hosting
 
+### 🤖 AI & LLM Integration
+
+- **[Groq API](https://groq.com/)**: High-speed LLM inference engine
+- **[Llama 3.3](https://ai.meta.com/llama/)**: Large Language Model for chatbot intelligence
+- **[LangChain](https://www.langchain.com/)**: Framework for LLM orchestration and logic
+
 ### Frontend
 
 - **[React](https://react.dev/)**: UI library for building user interfaces
 - **[Vite](https://vitejs.dev/)**: Next-generation frontend build tool
 - **[React Router](https://reactrouter.com/)**: Client-side routing
 - **Deployment**: [Vercel](https://vercel.com/)
+
+## 🤖 AI Chatbot Architecture
+
+The portfolio features a custom-built AI chatbot that uses **Retrieval-Augmented Generation (RAG)** to provide accurate answers about Tunji's background.
+
+### How it Works:
+
+1.  **Real-Time Retrieval**: When a user asks a question, the backend performs a real-time SQL query to fetch the latest Skills, Projects, About info, and Documents from the PostgreSQL database.
+2.  **Context Injection**: This live data is formatted into a system prompt that gives the AI a "persona" and the exact facts it needs.
+3.  **Inference**: The prompt + user question is sent to the **Groq API** (running **Llama 3.3-70b**) for ultra-fast generation.
+4.  **Result**: The chatbot answers strictly based on the provided data, ensuring accuracy and reducing hallucinations.
 
 ## 📋 Prerequisites
 
