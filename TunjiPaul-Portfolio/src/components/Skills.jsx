@@ -134,7 +134,7 @@ export default function Skills() {
                   >
                     <div className="flex items-center justify-center w-20 h-20 mb-2">
                       <IconComponent
-                        className="transition-transform group-hover:scale-110"
+                        className="transition-transform group-hover:scale-110 text-orange-600"
                         style={{ fontSize: "48px" }}
                       />
                     </div>
