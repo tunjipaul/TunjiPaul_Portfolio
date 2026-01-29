@@ -27,7 +27,7 @@ const iconMap = {
 
 const fallbackSkillsData = [
   {
-    category: "Frontend",
+    category: "FrontEnd",
     skills: [
       { name: "HTML", icon: FaIcons.FaHtml5, proficiency: 90 },
       { name: "CSS", icon: FaIcons.FaCss3Alt, proficiency: 85 },
@@ -37,7 +37,7 @@ const fallbackSkillsData = [
     ],
   },
   {
-    category: "Backend",
+    category: "BackEnd",
     skills: [
       { name: "Python", icon: FaIcons.FaPython, proficiency: 85 },
       { name: "FastAPI", icon: SiIcons.SiFastapi, proficiency: 75 },
