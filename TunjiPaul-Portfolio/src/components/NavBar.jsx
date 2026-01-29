@@ -41,6 +41,12 @@ function NavBar() {
               About
             </button>
             <button
+              onClick={() => scrollToSection("skills")}
+              className="text-gray-700 hover:text-orange-600 cursor-pointer"
+            >
+              Skills
+            </button>
+            <button
               onClick={() => scrollToSection("projects")}
               className="text-gray-700 hover:text-orange-600 cursor-pointer"
             >
@@ -78,6 +84,12 @@ function NavBar() {
             className="block text-gray-700 hover:text-orange-600 cursor-pointer"
           >
             Home
+          </button>
+          <button
+            onClick={() => scrollToSection("skills")}
+            className="block text-gray-700 hover:text-orange-600 cursor-pointer"
+          >
+            Skills
           </button>
           <button
             onClick={() => scrollToSection("about")}
