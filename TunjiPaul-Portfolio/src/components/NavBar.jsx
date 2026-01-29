@@ -86,16 +86,16 @@ function NavBar() {
             Home
           </button>
           <button
-            onClick={() => scrollToSection("skills")}
-            className="block text-gray-700 hover:text-orange-600 cursor-pointer"
-          >
-            Skills
-          </button>
-          <button
             onClick={() => scrollToSection("about")}
             className="block text-gray-700 hover:text-orange-600 cursor-pointer"
           >
             About
+          </button>
+          <button
+            onClick={() => scrollToSection("skills")}
+            className="block text-gray-700 hover:text-orange-600 cursor-pointer"
+          >
+            Skills
           </button>
           <button
             onClick={() => scrollToSection("projects")}
