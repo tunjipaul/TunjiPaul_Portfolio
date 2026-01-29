@@ -55,8 +55,22 @@ const fallbackSkillsData = [
 
 const getIcon = (skillName, iconFromDB) => {
   if (iconFromDB) {
+    // Check if it's a known React Icon
     const dbIcon = FaIcons[iconFromDB] || SiIcons[iconFromDB];
     if (dbIcon) return dbIcon;
+
+    // If not a known icon, assume it's an emoji/string
+    // Return a functional component that renders the emoji
+    return ({ className, style }) => (
+      <span
+        className={`${className} flex items-center justify-center`}
+        style={{ ...style, fontSize: "40px", lineHeight: "1" }}
+        role="img"
+        aria-label={skillName}
+      >
+        {iconFromDB}
+      </span>
+    );
   }
 
   if (iconMap[skillName]) {

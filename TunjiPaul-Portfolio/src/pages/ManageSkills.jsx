@@ -173,11 +173,11 @@ export default function ManageSkills() {
                 name="icon"
                 value={formData.icon}
                 onChange={handleInputChange}
-                placeholder="e.g., FaReact, SiTailwindcss, FaPython"
+                placeholder="e.g., FaReact, 🚀, 🐍, SiPython"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-600"
               />
               <p className="text-sm text-gray-600 mt-2">
-                Leave empty to use default icon mapping. Common icons:
+                Leave empty for default. <b>You can use emojis (e.g., 🎨) if no icon code is known!</b>
               </p>
               <div className="text-xs text-gray-500 mt-1 space-y-1">
                 <p>
