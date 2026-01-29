@@ -13,6 +13,7 @@ class SkillBase(BaseModel):
     name: str
     category: str
     icon: Optional[str] = None
+    proficiency: Optional[int] = 50
 
 
 class SkillCreate(SkillBase):
@@ -23,6 +24,7 @@ class SkillUpdate(BaseModel):
     name: Optional[str] = None
     category: Optional[str] = None
     icon: Optional[str] = None
+    proficiency: Optional[int] = None
 
 
 class SkillResponse(SkillBase):
@@ -63,7 +65,12 @@ def create_skill(
             status_code=400, detail="Skill with this name already exists"
         )
 
-    new_skill = Skill(name=skill.name, category=skill.category)
+    new_skill = Skill(
+        name=skill.name,
+        category=skill.category,
+        icon=skill.icon,
+        proficiency=skill.proficiency or 50,
+    )
     db.add(new_skill)
     db.commit()
     db.refresh(new_skill)

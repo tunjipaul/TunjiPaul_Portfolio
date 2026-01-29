@@ -29,26 +29,26 @@ const fallbackSkillsData = [
   {
     category: "Frontend",
     skills: [
-      { name: "HTML", icon: FaIcons.FaHtml5 },
-      { name: "CSS", icon: FaIcons.FaCss3Alt },
-      { name: "JavaScript", icon: FaIcons.FaJsSquare },
-      { name: "React", icon: FaIcons.FaReact },
-      { name: "Tailwind CSS", icon: SiIcons.SiTailwindcss },
+      { name: "HTML", icon: FaIcons.FaHtml5, proficiency: 90 },
+      { name: "CSS", icon: FaIcons.FaCss3Alt, proficiency: 85 },
+      { name: "JavaScript", icon: FaIcons.FaJsSquare, proficiency: 80 },
+      { name: "React", icon: FaIcons.FaReact, proficiency: 75 },
+      { name: "Tailwind CSS", icon: SiIcons.SiTailwindcss, proficiency: 80 },
     ],
   },
   {
     category: "Backend",
     skills: [
-      { name: "Python", icon: FaIcons.FaPython },
-      { name: "FastAPI", icon: SiIcons.SiFastapi },
-      { name: "MySQL", icon: SiIcons.SiMysql },
+      { name: "Python", icon: FaIcons.FaPython, proficiency: 85 },
+      { name: "FastAPI", icon: SiIcons.SiFastapi, proficiency: 75 },
+      { name: "MySQL", icon: SiIcons.SiMysql, proficiency: 70 },
     ],
   },
   {
     category: "Tools, Version Control & AI",
     skills: [
-      { name: "Git", icon: FaIcons.FaGit },
-      { name: "GitHub", icon: FaIcons.FaGithub },
+      { name: "Git", icon: FaIcons.FaGit, proficiency: 80 },
+      { name: "GitHub", icon: FaIcons.FaGithub, proficiency: 85 },
     ],
   },
 ];
@@ -88,6 +88,7 @@ export default function Skills() {
         acc[category].push({
           name: skill.name,
           iconName: skill.icon,
+          proficiency: skill.proficiency || 50,
         });
         return acc;
       }, {});
@@ -97,6 +98,7 @@ export default function Skills() {
         skills: groupedSkills[category].map((skill) => ({
           name: skill.name,
           icon: getIcon(skill.name, skill.iconName),
+          proficiency: skill.proficiency,
         })),
       }));
 
@@ -124,26 +126,35 @@ export default function Skills() {
             <div className="flex flex-wrap justify-center gap-6">
               {category.skills.map((skill) => {
                 const IconComponent = skill.icon;
+                const proficiency = skill.proficiency || 50;
                 return (
                   <div
                     key={skill.name}
-                    className="flex flex-col items-center justify-center w-40 h-48 bg-black rounded-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-110 hover:shadow-lg group"
+                    className="flex flex-col items-center justify-between w-40 h-56 bg-black rounded-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 hover:shadow-lg group p-4"
                   >
-                    <div className="relative w-20 h-20 mb-3 flex items-center justify-center">
-                      <div
-                        className="absolute top-0 left-0 w-full h-full rounded-full border-4 border-orange-600 border-t-transparent animate-spin"
-                        style={{ animation: "spin 8s linear infinite" }}
-                      ></div>
-
+                    <div className="flex items-center justify-center w-20 h-20 mb-2">
                       <IconComponent
-                        className="relative z-10 text-orange-600 group-hover:text-orange-700 transition-colors"
-                        style={{ fontSize: "40px" }}
+                        className="transition-transform group-hover:scale-110"
+                        style={{ fontSize: "48px" }}
                       />
                     </div>
 
-                    <p className="text-center font-semibold text-white group-hover:text-orange-600 transition-colors px-2">
+                    <p className="text-center font-semibold text-white group-hover:text-orange-400 transition-colors px-2 mb-2">
                       {skill.name}
                     </p>
+
+                    <div className="w-full">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-xs text-gray-400">Proficiency</span>
+                        <span className="text-sm font-bold text-orange-400">{proficiency}%</span>
+                      </div>
+                      <div className="w-full bg-gray-700 rounded-full h-2">
+                        <div
+                          className="bg-gradient-to-r from-orange-500 to-orange-600 h-2 rounded-full transition-all duration-500"
+                          style={{ width: `${proficiency}%` }}
+                        ></div>
+                      </div>
+                    </div>
                   </div>
                 );
               })}

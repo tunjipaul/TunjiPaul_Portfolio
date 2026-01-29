@@ -91,6 +91,7 @@ class Skill(Base):
     name = Column(String(255), nullable=False, unique=True)
     category = Column(String(255), nullable=False)
     icon = Column(String(255), nullable=True)
+    proficiency = Column(Integer, default=50, nullable=False)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
@@ -201,6 +202,7 @@ def create_tables():
             name VARCHAR(255) NOT NULL UNIQUE,
             category VARCHAR(255) NOT NULL,
             icon VARCHAR(255),
+            proficiency INTEGER DEFAULT 50 NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         """

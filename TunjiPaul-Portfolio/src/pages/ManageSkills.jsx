@@ -11,6 +11,7 @@ export default function ManageSkills() {
     name: "",
     category: "Frontend",
     icon: "",
+    proficiency: 50,
   });
   const [editingId, setEditingId] = useState(null);
 
@@ -63,7 +64,7 @@ export default function ManageSkills() {
         body: JSON.stringify(formData),
       });
 
-      setFormData({ name: "", category: "Frontend", icon: "" });
+      setFormData({ name: "", category: "Frontend", icon: "", proficiency: 50 });
       setEditingId(null);
       fetchSkills();
       setError(null);
@@ -99,7 +100,7 @@ export default function ManageSkills() {
   };
 
   const handleCancel = () => {
-    setFormData({ name: "", category: "Frontend", icon: "" });
+    setFormData({ name: "", category: "Frontend", icon: "", proficiency: 50 });
     setEditingId(null);
   };
 
@@ -229,6 +230,42 @@ export default function ManageSkills() {
               </div>
             </div>
 
+            <div>
+              <label className="block text-gray-700 font-semibold mb-2">
+                Proficiency Level (%)
+              </label>
+              <div className="flex gap-4 items-center">
+                <input
+                  type="range"
+                  name="proficiency"
+                  min="0"
+                  max="100"
+                  value={formData.proficiency}
+                  onChange={handleInputChange}
+                  className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-orange-600"
+                />
+                <input
+                  type="number"
+                  name="proficiency"
+                  min="0"
+                  max="100"
+                  value={formData.proficiency}
+                  onChange={handleInputChange}
+                  className="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-600 text-center font-semibold"
+                />
+              </div>
+              <div className="mt-2 w-full bg-gray-200 rounded-full h-3">
+                <div
+                  className="bg-gradient-to-r from-orange-500 to-orange-600 h-3 rounded-full transition-all duration-300 flex items-center justify-end pr-2"
+                  style={{ width: `${formData.proficiency}%` }}
+                >
+                  <span className="text-xs text-white font-semibold">
+                    {formData.proficiency}%
+                  </span>
+                </div>
+              </div>
+            </div>
+
             <div className="flex gap-4">
               <button
                 type="submit"
@@ -261,6 +298,7 @@ export default function ManageSkills() {
                 </th>
                 <th className="px-6 py-4 text-left font-semibold">Category</th>
                 <th className="px-6 py-4 text-left font-semibold">Icon</th>
+                <th className="px-6 py-4 text-left font-semibold">Proficiency</th>
                 <th className="px-6 py-4 text-left font-semibold">Actions</th>
               </tr>
             </thead>
@@ -268,7 +306,7 @@ export default function ManageSkills() {
               {skills.length === 0 ? (
                 <tr>
                   <td
-                    colSpan="4"
+                    colSpan="5"
                     className="px-6 py-8 text-center text-gray-500"
                   >
                     No skills added yet. Create one to get started!
@@ -298,6 +336,19 @@ export default function ManageSkills() {
                           Default
                         </span>
                       )}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex-1 bg-gray-200 rounded-full h-2 min-w-[100px]">
+                          <div
+                            className="bg-gradient-to-r from-orange-500 to-orange-600 h-2 rounded-full transition-all"
+                            style={{ width: `${skill.proficiency || 50}%` }}
+                          ></div>
+                        </div>
+                        <span className="text-sm font-semibold text-orange-600 min-w-[45px]">
+                          {skill.proficiency || 50}%
+                        </span>
+                      </div>
                     </td>
                     <td className="px-6 py-4 flex gap-3">
                       <button
