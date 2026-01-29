@@ -27,7 +27,7 @@ function About() {
   return (
     <section
       id="about"
-      className="min-h-screen flex flex-col md:flex-row md:items-start items-center bg-black px-6 md:px-20 py-12 md:py-20 gap-8 md:gap-12"
+      className="flex flex-col md:flex-row md:items-start items-center bg-black px-6 md:px-20 py-12 md:py-12 gap-8 md:gap-12"
     >
       {/* Image Container */}
       <div className="w-full md:w-1/2 flex justify-start">
