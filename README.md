@@ -85,7 +85,7 @@ cd TunjiPaul_Portfolio
 Navigate to the backend directory:
 
 ```bash
-cd backEnd
+cd backend
 ```
 
 #### Create Virtual Environment
@@ -109,7 +109,7 @@ pip install -r requirements.txt
 
 #### Configure Environment Variables
 
-Create a `.env` file in the `backEnd` directory (use `.env.example` as reference):
+Create a `.env` file in the `backend` directory (use `.env.example` as reference):
 
 ```env
 # Database Configuration
@@ -155,7 +155,7 @@ CREATE DATABASE portfolio_db;
 Navigate to the frontend directory:
 
 ```bash
-cd ../TunjiPaul-Portfolio
+cd ../frontend
 ```
 
 #### Install Dependencies
@@ -177,7 +177,7 @@ VITE_API_URL=http://localhost:8000
 #### Start Backend Server
 
 ```bash
-# From the backEnd directory
+# From the backend directory
 uvicorn app:app --reload --host 0.0.0.0 --port 8000
 ```
 
@@ -186,7 +186,7 @@ The API will be available at `http://localhost:8000`
 #### Start Frontend Development Server
 
 ```bash
-# From the TunjiPaul-Portfolio directory
+# From the frontend directory
 npm run dev
 ```
 
@@ -262,7 +262,7 @@ Once the backend server is running, interactive API documentation is available a
 
 ```
 TunjiPaul_Portfolio/
-├── backEnd/
+├── backend/
 │   ├── alembic/               # Database migration scripts
 │   ├── uploads/               # Uploaded documents storage
 │   │   └── documents/         # PDF files
@@ -280,7 +280,7 @@ TunjiPaul_Portfolio/
 │   ├── .env                   # Environment variables (not in git)
 │   └── .env.example           # Example environment variables
 │
-├── TunjiPaul-Portfolio/       # React frontend
+├── frontend/                  # React frontend
 │   ├── src/
 │   │   ├── components/        # Reusable UI components
 │   │   ├── pages/             # Page components (Home, Admin, etc.)
@@ -429,6 +429,7 @@ pip install -r requirements.txt && alembic upgrade head
 1. **Connect your GitHub repository** to Vercel
 
 2. **Configure build settings**:
+   - Root Directory: `frontend`
    - Build Command: `npm run build`
    - Output Directory: `dist`
    - Install Command: `npm install`
@@ -445,7 +446,7 @@ pip install -r requirements.txt && alembic upgrade head
 Test database connection:
 
 ```bash
-cd backEnd
+cd backend
 python test_db.py
 ```
 

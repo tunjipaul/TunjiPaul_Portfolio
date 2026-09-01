@@ -1,0 +1,9 @@
+.env
+__pycache__/
+database.sql
+uploads/
+myenv/
+*.pyc
+.env.local
+.env.example
+.specstory

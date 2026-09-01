@@ -1,0 +1,149 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import API_URL from "../config";
+import Seo from "../seo/Seo";
+import { PAGES } from "../seo/site";
+
+function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    if (isLoggedIn === "true") {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    if (!email.trim() || !password.trim()) {
+      setError("Email and password are required");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || "Login failed");
+      }
+
+      const expiryTime = Date.now() + (data.expires_in * 1000);
+      localStorage.setItem("accessToken", data.access_token);
+      localStorage.setItem("tokenExpiry", expiryTime.toString());
+      localStorage.setItem("adminEmail", data.email);
+      localStorage.setItem("isLoggedIn", "true");
+
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div
+      className="min-h-screen bg-cover bg-center flex items-center justify-center px-4"
+      style={{
+        backgroundImage:
+          "url('https://res.cloudinary.com/dbadkovof/image/upload/f_auto,q_auto,w_1920/v1763293025/Gemini_Generated_Image_kskrlhkskrlhkskr_ldpyun.png')",
+      }}
+    >
+      <Seo
+        title={PAGES.admin.title}
+        description={PAGES.admin.description}
+        path={PAGES.admin.path}
+        noindex
+      />
+      <form
+        className="bg-white/80 backdrop-blur-md p-8 rounded-xl shadow-md w-full max-w-md"
+        onSubmit={handleSubmit}
+        aria-labelledby="admin-login-heading"
+      >
+        <h1
+          id="admin-login-heading"
+          className="text-2xl font-bold mb-6 text-center text-orange-600"
+        >
+          Admin Login
+        </h1>
+
+        {error && (
+          <p className="mb-4 text-red-600 text-sm text-center" role="alert">
+            {error}
+          </p>
+        )}
+
+        <label htmlFor="admin-email" className="sr-only">
+          Email
+        </label>
+        <input
+          id="admin-email"
+          type="email"
+          name="email"
+          autoComplete="username"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full mb-4 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600 border-gray-300"
+          required
+        />
+
+        <div className="relative mb-6">
+          <label htmlFor="admin-password" className="sr-only">
+            Password
+          </label>
+          <input
+            id="admin-password"
+            type={showPassword ? "text" : "password"}
+            name="password"
+            autoComplete="current-password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600 border-gray-300"
+            required
+          />
+          <button
+            type="button"
+            className="absolute right-3 top-2 min-h-11 min-w-11 inline-flex items-center justify-center text-gray-600"
+            onClick={() => setShowPassword(!showPassword)}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </button>
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className={`w-full py-2 font-semibold rounded-lg transition cursor-pointer ${
+            loading
+              ? "bg-gray-400 text-gray-200"
+              : "bg-orange-600 text-white hover:bg-orange-500 hover:text-black"
+          }`}
+        >
+          {loading ? "Logging in..." : "Login"}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+export default Login;

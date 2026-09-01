@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /login
+
+Host: https://tunjipaul.tech
+
+Sitemap: https://tunjipaul.tech/sitemap.xml

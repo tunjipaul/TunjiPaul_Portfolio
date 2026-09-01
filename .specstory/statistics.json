@@ -1,0 +1,58 @@
+{
+  "sessions": {
+    "019b79d3-3fcb-7b12-8d68-d49c940ae975": {
+      "user_message_count": 0,
+      "agent_message_count": 0,
+      "start_timestamp": "2026-01-01T13:50:46.219Z",
+      "end_timestamp": "2026-01-01T13:50:46.219Z",
+      "markdown_size_bytes": 161,
+      "provider": "codex-cli",
+      "last_updated": "2026-05-26T10:46:23Z"
+    },
+    "019b8498-ffbd-7023-8275-b12daf853725": {
+      "user_message_count": 1,
+      "agent_message_count": 0,
+      "start_timestamp": "2026-01-03T16:03:07.520Z",
+      "end_timestamp": "2026-01-03T16:02:58.109Z",
+      "markdown_size_bytes": 574,
+      "provider": "codex-cli",
+      "last_updated": "2026-05-26T10:46:45Z"
+    },
+    "428bf58b-cb50-4e5d-b89a-33ac06210206": {
+      "user_message_count": 9,
+      "agent_message_count": 30,
+      "start_timestamp": "2026-01-01T13:43:27+01:00",
+      "end_timestamp": "2026-01-01T14:08:40+01:00",
+      "markdown_size_bytes": 21287,
+      "provider": "copilotide",
+      "last_updated": "2026-06-17T19:19:41Z"
+    },
+    "7a0f2ad8-7588-49f4-baeb-e17a2269472c": {
+      "user_message_count": 1,
+      "agent_message_count": 0,
+      "start_timestamp": "2025-11-26T20:37:02+01:00",
+      "end_timestamp": "2025-11-26T20:37:02+01:00",
+      "markdown_size_bytes": 211,
+      "provider": "copilotide",
+      "last_updated": "2026-06-17T19:19:41Z"
+    },
+    "a621e5f9-26e1-4ba9-b8df-efe94b24e5cf": {
+      "user_message_count": 1,
+      "agent_message_count": 0,
+      "start_timestamp": "2026-01-03T17:03:04+01:00",
+      "end_timestamp": "2026-01-03T17:03:04+01:00",
+      "markdown_size_bytes": 221,
+      "provider": "copilotide",
+      "last_updated": "2026-06-17T19:19:41Z"
+    },
+    "cae62d04-5aeb-42cd-bb44-bcabf860d426": {
+      "user_message_count": 5,
+      "agent_message_count": 14,
+      "start_timestamp": "2025-12-13T20:54:48+01:00",
+      "end_timestamp": "2025-12-13T21:49:24+01:00",
+      "markdown_size_bytes": 8905,
+      "provider": "copilotide",
+      "last_updated": "2026-06-17T19:19:41Z"
+    }
+  }
+}

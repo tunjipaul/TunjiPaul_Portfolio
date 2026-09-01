@@ -1,0 +1,23 @@
+{
+  "name": "Tunji Paul — AI Developer Portfolio",
+  "short_name": "Tunji Paul",
+  "description": "AI developer in Lagos, Nigeria building intelligent, scalable systems with React, Python, and FastAPI.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fff7ed",
+  "theme_color": "#ea580c",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "https://res.cloudinary.com/dbadkovof/image/upload/f_png,w_192,h_192,c_fill/v1769621534/targaryen_sigil-removebg-preview_ropala.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://res.cloudinary.com/dbadkovof/image/upload/f_png,w_512,h_512,c_fill/v1769621534/targaryen_sigil-removebg-preview_ropala.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

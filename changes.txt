@@ -1,0 +1,27 @@
+
+re-design
+
+deploy backend and database elsewhere from render and aivenconsole
+
+for redesign, if i still want to deploy on render, i will use a video to start it... might probably deploy on pxxl or brimble(check the name!!)
+
+hand-sign changes from naruto plus the dragon song from hotd after then vermithors fire opening the website.
+
+i want something minimalistic but catchy.
+
+far better upgrade than the version 1.0
+ add substack link to the contacts in version 1 and 2.
+
+ remove the admin tag in v1.0.
+ improve the admin dashboard in v1.0 and v2.0.
+
+most likely buy a domain.
+
+add a section to view my articles from my medium and substack... like a blog.
+
+
+change TunjiPaul-Portfolio to frontend and backEnd to backend
+
+also since i want to create a version 2, how do it without touching this one, the v2 entails a complete reesign of the public and admin pages and also the details, some things in v1 like content writeup will still be in versio n 2 so.. what is the best approach.
+
+
